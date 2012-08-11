@@ -1,0 +1,145 @@
+.TH TurnCorner 3 "29 May 2002" "HulkRobot" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+TurnCorner \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <TurnCorner.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBTurnCorner\fR (int priority, int samplingPeriod, int stackSize, \fBgyro\fR *aG, \fBusonic\fR *aU, \fBwheel\fR *aW)"
+.br
+.ti -1c
+.RI "\fB~TurnCorner\fR ()"
+.br
+.ti -1c
+.RI "int \fBinit\fR (void)"
+.br
+.ti -1c
+.RI "int \fBstep\fR (void)"
+.br
+.ti -1c
+.RI "int \fBrun\fR (void)"
+.br
+.ti -1c
+.RI "int \fBstop\fR (void)"
+.br
+.in -1c
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS TurnCorner::TurnCorner (int _priority, int _samplingPeriod, int stackSize, \fBgyro\fR * aG, \fBusonic\fR * aU, \fBwheel\fR * aW)
+.PP
+Definition at line 9 of file TurnCorner.cc.
+.PP
+.nf
+00011 {
+00012 
+00013   Error( ErrorDebug, "TurnCorner initializing");
+00014   priority        = _priority;
+00015   samplingPeriod= _samplingPeriod;
+00016   delayTicks      = samplingPeriod/OSTickPeriod;
+00017 
+00018   taskMode        = TaskStopped;
+00019   taskSem = semBCreate(SEM_Q_PRIORITY, SEM_EMPTY);
+00020   tickerSem       = semBCreate(SEM_Q_PRIORITY, SEM_EMPTY);
+00021   taskExitSem     = semBCreate(SEM_Q_PRIORITY, SEM_EMPTY);
+00022   tickerExitSem   = semBCreate(SEM_Q_PRIORITY, SEM_EMPTY);
+00023 
+00024   aGyro = aG;
+00025   aUSonic = aU;
+00026   aWheel = aW;
+00027 
+00028   Assert( taskSem && taskExitSem && tickerSem && tickerExitSem );
+00029 
+00030   taskId  = taskSpawn("TurnCorner", priority, VX_FP_TASK, 
+00031                           stackSize, (FUNCPTR) taskModuleStub,
+00032                           (int) this, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+00033   Assert(taskId!=ERROR);
+00034 
+00035   semTake(taskExitSem, WAIT_FOREVER);
+00036   
+00037   tickerTaskId    = taskSpawn("TurnCorner", TickerTaskPriority, 0, 
+00038                           TickerTaskStackSize,
+00039                           (FUNCPTR) taskModuleTickerStub,
+00040                           (int) this,
+00041                           0, 0, 0, 0,
+00042                           0, 0, 0, 0, 0);
+00043   Assert(tickerTaskId!=ERROR);
+00044   semTake(tickerExitSem, WAIT_FOREVER);
+00045 
+.fi
+.SS TurnCorner::~TurnCorner ()
+.PP
+Definition at line 47 of file TurnCorner.cc.
+.PP
+.nf
+00048 {
+00049   taskMode=TaskTerminate;
+00050   semGive(tickerSem);
+00051   semGive(taskSem);
+00052   semTake(tickerExitSem, WAIT_FOREVER);
+00053   semTake(taskExitSem, WAIT_FOREVER);
+00054   semDelete(taskSem);
+00055   semDelete(taskExitSem);
+00056   semDelete(tickerSem);
+00057   semDelete(tickerExitSem);
+00058 
+00059   Error( ErrorDebug, "TurnCorner destroyed");
+00060 
+.fi
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int TurnCorner::init (void)
+.PP
+Definition at line 121 of file TurnCorner.cc.
+.PP
+.nf
+00122 {
+00123 
+.fi
+.SS int TurnCorner::run (void)
+.PP
+Definition at line 132 of file TurnCorner.cc.
+.PP
+Referenced by hulkmaincpp().
+.PP
+.nf
+00133 {
+00134   taskMode=TaskRunning;
+00135   semGive(tickerSem);
+00136   return 0;
+00137 
+.fi
+.SS int TurnCorner::step (void)
+.PP
+Definition at line 125 of file TurnCorner.cc.
+.PP
+.nf
+00126 {
+00127   taskMode=TaskStep;
+00128   semGive(taskSem);
+00129   return 0;
+00130 
+.fi
+.SS int TurnCorner::stop (void)
+.PP
+Definition at line 139 of file TurnCorner.cc.
+.PP
+Referenced by hulkmaincpp().
+.PP
+.nf
+00140 {
+00141   taskMode=TaskStopped;
+00142   return 0;
+00143 
+.fi
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for HulkRobot from the source code.

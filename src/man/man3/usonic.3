@@ -1,0 +1,65 @@
+.TH usonic 3 "29 May 2002" "HulkRobot" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+usonic \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <usonic.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBusonic\fR ()"
+.br
+.ti -1c
+.RI "\fB~usonic\fR ()"
+.br
+.ti -1c
+.RI "unsigned \fBusData\fR (int)"
+.br
+.in -1c
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS usonic::usonic ()
+.PP
+Definition at line 32 of file usonic.cc.
+.PP
+.nf
+00033 {
+00034   for(int i=0; i<MaxSonars;i++)
+00035     range[i]=0x7fffffff; /* max value */
+00036   if(numOpen==0) {
+00037     createScanTask();
+00038   }
+00039 
+.fi
+.SS usonic::~usonic ()
+.PP
+Definition at line 42 of file usonic.cc.
+.PP
+.nf
+00043 {
+00044   numOpen--;
+00045   if(numOpen==0)
+00046     terminateScanTask();
+00047 
+.fi
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS unsigned usonic::usData (int _num)
+.PP
+Definition at line 169 of file usonic.cc.
+.PP
+.nf
+00170 {
+00171   return range[_num];
+00172 
+.fi
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for HulkRobot from the source code.

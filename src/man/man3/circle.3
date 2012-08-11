@@ -1,0 +1,108 @@
+.TH circle 3 "29 May 2002" "HulkRobot" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+circle \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <circle.h>\fR
+.PP
+Inherits \fBDPU\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBcircle\fR (TModule *parentTask, char *name)"
+.br
+.ti -1c
+.RI "virtual \fB~circle\fR ()"
+.br
+.ti -1c
+.RI "virtual char* \fBgetClassName\fR (void)"
+.br
+.ti -1c
+.RI "virtual int \fBinit\fR (void)"
+.br
+.ti -1c
+.RI "virtual int \fBfire\fR (void)"
+.br
+.in -1c
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS circle::circle (TModule * parentTask, char * name)
+.PP
+Definition at line 11 of file circle.cc.
+.PP
+.nf
+00012 :DPU(parentTask, name)
+00013 {
+00014   addOPort( speedOutput=new mvOPort(this, "Speed", MaxSpeed, -MaxSpeed));
+00015   addOPort( turnOutput=new mvOPort(this, "Turn", MaxSpeed, -MaxSpeed));
+00016   addOPort( emStopOutput=new OPort(this, "EmergencyStop", DataTypeInt));
+00017 
+.fi
+.SS circle::~circle ()\fC [virtual]\fR
+.PP
+Definition at line 19 of file circle.cc.
+.PP
+.nf
+00020 {  
+00021 /* output ports deleted by ~DPU()
+00022   delete speedOutput;
+00023   delete turnOutput;
+00024   delete emStopOutput;
+00025 */
+00026 
+.fi
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int circle::fire (void)\fC [virtual]\fR
+.PP
+Definition at line 34 of file circle.cc.
+.PP
+.nf
+00035 {
+00036   int tt;
+00037 
+00038   Error(ErrorDebug, "circle::fire()");
+00039 
+00040   speedOutput->clearRange();
+00041   turnOutput->clearRange();
+00042 
+00043   emStopOutput->setIntValue(0);
+00044 
+00045   if (t<10) {
+00046     speedOutput->setRangeValue( t*TargetSpeed/10.0, t*TargetSpeed/10.0, 10 );
+00047     turnOutput->setRangeValue( 0.0, 0.0, 10 );
+00048   } else {
+00049     speedOutput->setRangeValue( TargetSpeed, TargetSpeed, 10 );
+00050     //turnOutput->setRangeValue( 0.05, 0.05, 10 );
+00051     turnOutput->setRangeValue( 0.00, 0.00, 10 );
+00052   }
+00053 
+.fi
+.SS char * circle::getClassName (void)\fC [inline, virtual]\fR
+.PP
+Definition at line 13 of file circle.h.
+.PP
+.nf
+00013                                         { return "circle"; }
+00014 
+.fi
+.SS int circle::init (void)\fC [virtual]\fR
+.PP
+Definition at line 28 of file circle.cc.
+.PP
+.nf
+00029 {
+00030   t=0;
+00031   return 0;
+00032 
+.fi
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for HulkRobot from the source code.

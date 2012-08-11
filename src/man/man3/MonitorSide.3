@@ -1,0 +1,161 @@
+.TH MonitorSide 3 "29 May 2002" "HulkRobot" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+MonitorSide \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <MonitorSide.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBMonitorSide\fR (int priority, int samplingPeriod, int stackSize, \fBgyro\fR *aG, \fBusonic\fR *aU, \fBwheel\fR *aW)"
+.br
+.ti -1c
+.RI "\fB~MonitorSide\fR ()"
+.br
+.ti -1c
+.RI "int \fBinit\fR (void)"
+.br
+.ti -1c
+.RI "int \fBstep\fR (void)"
+.br
+.ti -1c
+.RI "int \fBrun\fR (void)"
+.br
+.ti -1c
+.RI "int \fBstop\fR (void)"
+.br
+.ti -1c
+.RI "int \fBisSide\fR (void)"
+.br
+.in -1c
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS MonitorSide::MonitorSide (int _priority, int _samplingPeriod, int stackSize, \fBgyro\fR * aG, \fBusonic\fR * aU, \fBwheel\fR * aW)
+.PP
+Definition at line 18 of file MonitorSide.cc.
+.PP
+.nf
+00020 {
+00021 
+00022   Error( ErrorDebug, "MonitorSide initializing");
+00023   priority        = _priority;
+00024   samplingPeriod= _samplingPeriod;
+00025   delayTicks      = samplingPeriod/OSTickPeriod;
+00026 
+00027   taskMode        = TaskStopped;
+00028   taskSem = semBCreate(SEM_Q_PRIORITY, SEM_EMPTY);
+00029   tickerSem       = semBCreate(SEM_Q_PRIORITY, SEM_EMPTY);
+00030   taskExitSem     = semBCreate(SEM_Q_PRIORITY, SEM_EMPTY);
+00031   tickerExitSem   = semBCreate(SEM_Q_PRIORITY, SEM_EMPTY);
+00032 
+00033   aGyro = aG;
+00034   aUSonic = aU;
+00035   aWheel = aW;
+00036 
+00037   Assert( taskSem && taskExitSem && tickerSem && tickerExitSem );
+00038 
+00039   taskId  = taskSpawn("MonitorSide", priority, VX_FP_TASK, 
+00040                           stackSize, (FUNCPTR) taskModuleStub,
+00041                           (int) this, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+00042   Assert(taskId!=ERROR);
+00043 
+00044   semTake(taskExitSem, WAIT_FOREVER);
+00045   
+00046   tickerTaskId    = taskSpawn("MonitorSide", TickerTaskPriority, 0, 
+00047                           TickerTaskStackSize,
+00048                           (FUNCPTR) taskModuleTickerStub,
+00049                           (int) this,
+00050                           0, 0, 0, 0,
+00051                           0, 0, 0, 0, 0);
+00052   Assert(tickerTaskId!=ERROR);
+00053   semTake(tickerExitSem, WAIT_FOREVER);
+00054 
+00055   side = 0; // set initial monitor signal ,false
+00056 
+.fi
+.SS MonitorSide::~MonitorSide ()
+.PP
+Definition at line 58 of file MonitorSide.cc.
+.PP
+.nf
+00059 {
+00060   taskMode=TaskTerminate;
+00061   semGive(tickerSem);
+00062   semGive(taskSem);
+00063   semTake(tickerExitSem, WAIT_FOREVER);
+00064   semTake(taskExitSem, WAIT_FOREVER);
+00065   semDelete(taskSem);
+00066   semDelete(taskExitSem);
+00067   semDelete(tickerSem);
+00068   semDelete(tickerExitSem);
+00069 
+00070   Error( ErrorDebug, "MonitorSide destroyed");
+00071 
+.fi
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int MonitorSide::init (void)
+.PP
+Definition at line 149 of file MonitorSide.cc.
+.PP
+Referenced by hulkmaincpp().
+.PP
+.nf
+00150 {
+00151 
+.fi
+.SS int MonitorSide::isSide (void)
+.PP
+Definition at line 143 of file MonitorSide.cc.
+.PP
+Referenced by hulkmaincpp().
+.PP
+.nf
+00144 {
+00145   return side;
+00146 
+.fi
+.SS int MonitorSide::run (void)
+.PP
+Definition at line 160 of file MonitorSide.cc.
+.PP
+Referenced by hulkmaincpp().
+.PP
+.nf
+00161 {
+00162   taskMode=TaskRunning;
+00163   semGive(tickerSem);
+00164   return 0;
+00165 
+.fi
+.SS int MonitorSide::step (void)
+.PP
+Definition at line 153 of file MonitorSide.cc.
+.PP
+.nf
+00154 {
+00155   taskMode=TaskStep;
+00156   semGive(taskSem);
+00157   return 0;
+00158 
+.fi
+.SS int MonitorSide::stop (void)
+.PP
+Definition at line 167 of file MonitorSide.cc.
+.PP
+.nf
+00168 {
+00169   taskMode=TaskStopped;
+00170   return 0;
+00171 
+.fi
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for HulkRobot from the source code.

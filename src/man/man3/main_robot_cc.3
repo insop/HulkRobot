@@ -1,0 +1,239 @@
+.TH robot.cc 3 "29 May 2002" "HulkRobot" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+robot.cc \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <stdio.h>\fR
+.br
+\fC#include "dfl.h"\fR
+.br
+\fC#include "wheel.h"\fR
+.br
+\fC#include "usonic.h"\fR
+.br
+\fC#include "gyro.h"\fR
+.br
+.SS Functions
+
+.in +1c
+.ti -1c
+.RI "void \fBhulkmain\fR ()"
+.br
+.ti -1c
+.RI "void \fB_exit\fR ()"
+.br
+.ti -1c
+.RI "void \fBhulkmaincpp\fR (void)"
+.br
+.ti -1c
+.RI "void \fBrunTest\fR (\fBwheel\fR *aW)"
+.br
+.in -1c
+.SH FUNCTION DOCUMENTATION
+.PP 
+.SS void _exit ()
+.PP
+Definition at line 19 of file main/robot.cc.
+.PP
+.nf
+00020 {
+00021   printf("_exit() called for unknown reason\n");
+00022 
+.fi
+.SS void hulkmain ()
+.PP
+Definition at line 14 of file main/robot.cc.
+.PP
+.nf
+00015 {
+00016   hulkmaincpp(); 
+00017 
+.fi
+.SS void hulkmaincpp (void)
+.PP
+Definition at line 27 of file main/robot.cc.
+.PP
+.nf
+00028 {
+00029   printf( "Hulk booting\n" );
+00030   initError(ErrorWarning);        // initialize error reporting module
+00031                           // and set error report threshold
+00032 
+00033   ////////////////////////////////////////////////////////////
+00034   //              for Gyro Sensor Test                        //
+00035   ////////////////////////////////////////////////////////////
+00036 
+00037   gyro *aGyro;
+00038   aGyro= new gyro();
+00039 
+00040 /*
+00041   while(1)
+00042     printf("heading is %d ", aGyro->getSteerHeading();
+00043   printf("Gyro testing \n");
+00044   while(1);       // test;
+00045 
+00046 
+00047 */
+00048 
+00049 /*
+00050   usonic *aUSonic;
+00051   aUSonic = new usonic();
+00052 
+00053 */
+00054   wheel   *aWheel;
+00055   aWheel = new wheel(100);
+00056 
+00057 /*
+00058 
+00059   taskDelay(1000);
+00060   aWheel->setSpeed(0.0);
+00061   aWheel->setSteerHeading(0.05);
+00062   taskDelay(1000);
+00063   taskDelay(1000);
+00064   taskDelay(1000);
+00065   taskDelay(1000);
+00066   taskDelay(1000);
+00067   taskDelay(1000);
+00068   taskDelay(1000);
+00069   aWheel->setSpeed(0.01);
+00070   aWheel->setSteerHeading(-0.05);
+00071   aWheel->setSpeed(0.1);
+00072   aWheel->setSteerHeading(-0.05);
+00073   taskDelay(1000);
+00074   taskDelay(1000);
+00075   taskDelay(1000);
+00076   aWheel->setSpeed(0.1);
+00077   aWheel->setSteerHeading(0.2);
+00078   taskDelay(1000);
+00079   aWheel->setSpeed(0.1);
+00080   aWheel->setSteerHeading(-0.2);
+00081   taskDelay(1000);
+00082   aWheel->setSpeed(0.0);
+00083   aWheel->setSteerHeading(0.0);
+00084   taskDelay(1000);
+00085   taskDelay(1000);
+00086   aWheel->setSpeed(-0.1);
+00087   aWheel->setSteerHeading(0.0);
+00088   taskDelay(1000);
+00089   taskDelay(1000);
+00090   aWheel->setSpeed(0.0);
+00091   aWheel->setSteerHeading(0.0);
+00092 */
+00093 
+00094 /*
+00095   int initialHeading = aGyro->getSteerHeading();
+00096   int finalHeading = initialHeading + 450;
+00097   int temp;
+00098   printf("init is %d final is %d\n ", initialHeading, finalHeading);
+00099 
+00100   aWheel->setSpeed(0.01);
+00101   aWheel->setSteerHeading(-0.01);
+00102   while(aGyro->getSteerHeading<finalHeading) {
+00103     taskDelay(5);
+00104   }
+00105   aWheel->setSpeed(0.0);
+00106   aWheel->setSteerHeading(0.0);
+00107 
+00108   printf("final is %d\n ", aGyro->getSteerHeading);
+00109   */
+00110 
+00111 
+00112 
+00113   printf( "Hulk Command Interpreter Running\n\n");
+00114   printf( "Available commands: R(un) S(top) Q(uit)\n" );
+00115   int quit=0;
+00116   int running=0;
+00117 
+00118   int tid;
+00119 
+00120 
+00121   char buffer[80];
+00122   while(!quit) {
+00123     printf( "command:\n" );
+00124     gets( buffer );
+00125     switch( buffer[0] ) {
+00126       case 'R':
+00127       case 'r':
+00128   if (!running) {
+00129     runTest(aWheel);
+00130     running=1;
+00131   }
+00132   break;
+00133 
+00134       case 'S':
+00135       case 's':
+00136   if (running) {
+00137     running=0;
+00138   }
+00139   break;
+00140 
+00141       case 'Q':
+00142       case 'q':
+00143   if (running) { 
+00144     running=0;
+00145   }
+00146   quit=1;
+00147   break;
+00148     }
+00149   }
+00150 
+.fi
+.SS void runTest (\fBwheel\fR * aW)
+.PP
+Definition at line 154 of file main/robot.cc.
+.PP
+Referenced by hulkmaincpp().
+.PP
+.nf
+00156 {
+00157 
+00158   wheel *aWheel;
+00159   aWheel = aW;
+00160   taskDelay(1000);
+00161   aWheel->setSpeed(0.1);
+00162   aWheel->setSteerHeading(0.0);
+00163   taskDelay(1000);
+00164   taskDelay(1000);
+00165   taskDelay(1000);
+00166   aWheel->setSpeed(0.1);
+00167   aWheel->setSteerHeading(-0.05);
+00168   taskDelay(1000);
+00169   taskDelay(1000);
+00170   taskDelay(1000);
+00171   taskDelay(1000);
+00172   taskDelay(1000);
+00173   taskDelay(1000);
+00174   taskDelay(1000);
+00175   /*
+00176   aWheel->setSpeed(0.1);
+00177   aWheel->setSteerHeading(-0.05);
+00178   taskDelay(1000);
+00179   taskDelay(1000);
+00180   taskDelay(1000);
+00181   aWheel->setSpeed(0.1);
+00182   aWheel->setSteerHeading(0.2);
+00183   taskDelay(1000);
+00184   aWheel->setSpeed(0.1);
+00185   aWheel->setSteerHeading(-0.2);
+00186   taskDelay(1000);
+00187   aWheel->setSpeed(0.0);
+00188   aWheel->setSteerHeading(0.0);
+00189   taskDelay(1000);
+00190   taskDelay(1000);
+00191   aWheel->setSpeed(-0.1);
+00192   aWheel->setSteerHeading(0.0);
+00193   taskDelay(1000);
+00194   taskDelay(1000);
+00195   */
+00196   aWheel->setSpeed(0.0);
+00197   aWheel->setSteerHeading(0.0);
+00198   delete aWheel;
+00199 
+00200 
+.fi
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for HulkRobot from the source code.

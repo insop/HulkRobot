@@ -1,0 +1,115 @@
+.TH wtest 3 "29 May 2002" "HulkRobot" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+wtest \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <wtest.h>\fR
+.PP
+Inherits \fBDPU\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBwtest\fR (TModule *parentTask, char *name)"
+.br
+.ti -1c
+.RI "virtual \fB~wtest\fR ()"
+.br
+.ti -1c
+.RI "virtual char* \fBgetClassName\fR (void)"
+.br
+.ti -1c
+.RI "virtual int \fBinit\fR (void)"
+.br
+.ti -1c
+.RI "virtual int \fBfire\fR (void)"
+.br
+.in -1c
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS wtest::wtest (TModule * parentTask, char * name)
+.PP
+Definition at line 11 of file wtest.cc.
+.PP
+.nf
+00012 :DPU(parentTask, name)
+00013 {
+00014   addOPort( speedOutput=new mvOPort(this, "Speed", MaxSpeed, -MaxSpeed));
+00015   addOPort( turnOutput=new mvOPort(this, "Turn", MaxSpeed, -MaxSpeed));
+00016   addOPort( emStopOutput=new OPort(this, "EmergencyStop", DataTypeSByte));
+00017 
+.fi
+.SS wtest::~wtest ()\fC [virtual]\fR
+.PP
+Definition at line 19 of file wtest.cc.
+.PP
+.nf
+00020 {  
+00021 /* output ports deleted by ~DPU()
+00022   delete speedOutput;
+00023   delete turnOutput;
+00024   delete emStopOutput;
+00025 */
+00026 
+.fi
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int wtest::fire (void)\fC [virtual]\fR
+.PP
+Definition at line 34 of file wtest.cc.
+.PP
+.nf
+00035 {
+00036   int tt;
+00037 
+00038   Error(ErrorDebug, "wtest::fire()");
+00039 
+00040   speedOutput->clearRange();
+00041   turnOutput->clearRange();
+00042 
+00043   emStopOutput->setSByteValue(0);
+00044   tt=t%100;
+00045 
+00046   if (tt<10) {
+00047     speedOutput->setRangeValue( tt*TargetSpeed/10.0, tt*TargetSpeed/10.0, 10 );
+00048     turnOutput->setRangeValue( 0.0, 0.0, 10 );
+00049   } else if (tt>=10 && tt<=90) {
+00050     speedOutput->setRangeValue( 10.0*TargetSpeed/10.0, 10.0*TargetSpeed/10.0, 10 );
+00051     turnOutput->setRangeValue( 0.07, 0.07, 10 );
+00052   } else if (tt>=190 && tt<=200) {
+00053     speedOutput->setRangeValue( 
+00054       (100-tt)*TargetSpeed/10.0, (100-tt)*TargetSpeed/10.0, 10 );
+00055     turnOutput->setRangeValue( 0.0, 0.0, 10 );
+00056   } else {
+00057     speedOutput->setRangeValue( 0.0, 0.0, 10 );
+00058     turnOutput->setRangeValue( 0.0, 0.0, 10 );
+00059   }
+00060 
+.fi
+.SS char * wtest::getClassName (void)\fC [inline, virtual]\fR
+.PP
+Definition at line 13 of file wtest.h.
+.PP
+.nf
+00013                                         { return "wtest"; }
+00014 
+.fi
+.SS int wtest::init (void)\fC [virtual]\fR
+.PP
+Definition at line 28 of file wtest.cc.
+.PP
+.nf
+00029 {
+00030   t=0;
+00031   return 0;
+00032 
+.fi
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for HulkRobot from the source code.

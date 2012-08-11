@@ -1,0 +1,147 @@
+.TH GoStraight 3 "29 May 2002" "HulkRobot" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+GoStraight \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <GoStraight.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBGoStraight\fR (int priority, int samplingPeriod, int stackSize, \fBgyro\fR *aG, \fBusonic\fR *aU, \fBwheel\fR *aW)"
+.br
+.ti -1c
+.RI "\fB~GoStraight\fR ()"
+.br
+.ti -1c
+.RI "int \fBinit\fR (void)"
+.br
+.ti -1c
+.RI "int \fBstep\fR (void)"
+.br
+.ti -1c
+.RI "int \fBrun\fR (void)"
+.br
+.ti -1c
+.RI "int \fBstop\fR (void)"
+.br
+.in -1c
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS GoStraight::GoStraight (int _priority, int _samplingPeriod, int stackSize, \fBgyro\fR * aG, \fBusonic\fR * aU, \fBwheel\fR * aW)
+.PP
+Definition at line 5 of file GoStraight.cc.
+.PP
+.nf
+00007 {
+00008 
+00009   Error( ErrorDebug, "GoStraight initializing");
+00010   priority        = _priority;
+00011   samplingPeriod= _samplingPeriod;
+00012   delayTicks      = samplingPeriod/OSTickPeriod;
+00013 
+00014   taskMode        = TaskStopped;
+00015   taskSem = semBCreate(SEM_Q_PRIORITY, SEM_EMPTY);
+00016   tickerSem       = semBCreate(SEM_Q_PRIORITY, SEM_EMPTY);
+00017   taskExitSem     = semBCreate(SEM_Q_PRIORITY, SEM_EMPTY);
+00018   tickerExitSem   = semBCreate(SEM_Q_PRIORITY, SEM_EMPTY);
+00019 
+00020   aGyro = aG;
+00021   aUSonic = aU;
+00022   aWheel = aW;
+00023 
+00024   Assert( taskSem && taskExitSem && tickerSem && tickerExitSem );
+00025 
+00026   taskId  = taskSpawn("GoStraight", priority, VX_FP_TASK, 
+00027                           stackSize, (FUNCPTR) taskModuleStub,
+00028                           (int) this, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+00029   Assert(taskId!=ERROR);
+00030 
+00031   semTake(taskExitSem, WAIT_FOREVER);
+00032   
+00033   tickerTaskId    = taskSpawn("GoStraight", TickerTaskPriority, 0, 
+00034                           TickerTaskStackSize,
+00035                           (FUNCPTR) taskModuleTickerStub,
+00036                           (int) this,
+00037                           0, 0, 0, 0,
+00038                           0, 0, 0, 0, 0);
+00039   Assert(tickerTaskId!=ERROR);
+00040   semTake(tickerExitSem, WAIT_FOREVER);
+00041 
+.fi
+.SS GoStraight::~GoStraight ()
+.PP
+Definition at line 43 of file GoStraight.cc.
+.PP
+.nf
+00044 {
+00045   taskMode=TaskTerminate;
+00046   semGive(tickerSem);
+00047   semGive(taskSem);
+00048   semTake(tickerExitSem, WAIT_FOREVER);
+00049   semTake(taskExitSem, WAIT_FOREVER);
+00050   semDelete(taskSem);
+00051   semDelete(taskExitSem);
+00052   semDelete(tickerSem);
+00053   semDelete(tickerExitSem);
+00054 
+00055   Error( ErrorDebug, "GoStraight destroyed");
+00056 
+.fi
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int GoStraight::init (void)
+.PP
+Definition at line 121 of file GoStraight.cc.
+.PP
+Referenced by hulkmaincpp().
+.PP
+.nf
+00122 {
+00123 
+.fi
+.SS int GoStraight::run (void)
+.PP
+Definition at line 132 of file GoStraight.cc.
+.PP
+Referenced by hulkmaincpp().
+.PP
+.nf
+00133 {
+00134   taskMode=TaskRunning;
+00135   semGive(tickerSem);
+00136   return 0;
+00137 
+.fi
+.SS int GoStraight::step (void)
+.PP
+Definition at line 125 of file GoStraight.cc.
+.PP
+.nf
+00126 {
+00127   taskMode=TaskStep;
+00128   semGive(taskSem);
+00129   return 0;
+00130 
+.fi
+.SS int GoStraight::stop (void)
+.PP
+Definition at line 139 of file GoStraight.cc.
+.PP
+Referenced by hulkmaincpp().
+.PP
+.nf
+00140 {
+00141   taskMode=TaskStopped;
+00142   return 0;
+00143 
+.fi
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for HulkRobot from the source code.

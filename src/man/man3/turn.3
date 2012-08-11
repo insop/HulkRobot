@@ -1,0 +1,113 @@
+.TH turn 3 "29 May 2002" "HulkRobot" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+turn \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <turn.h>\fR
+.PP
+Inherits \fBDPU\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBturn\fR (TModule *parentTask, char *name, int threshold, char *mode)"
+.br
+.ti -1c
+.RI "virtual \fB~turn\fR ()"
+.br
+.ti -1c
+.RI "virtual char* \fBgetClassName\fR (void)"
+.br
+.ti -1c
+.RI "virtual int \fBinit\fR (void)"
+.br
+.ti -1c
+.RI "virtual int \fBfire\fR (void)"
+.br
+.in -1c
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS turn::turn (TModule * parentTask, char * name, int _threshold, char * _mode)
+.PP
+Definition at line 8 of file turn.cc.
+.PP
+.nf
+00009 :DPU(parentTask, name)
+00010 {
+00011   threshold = _threshold;
+00012 
+00013   if (!strcmp(_mode, "left"))             turnMode = TURN_LEFT;
+00014   else if (!strcmp(_mode, "right"))       turnMode = TURN_RIGHT;
+00015   else if (!strcmp(_mode, "stop"))        turnMode = TURN_STOP;
+00016   else {
+00017     Error(ErrorFatal, "mode must be 'left', 'right' or 'stop'" );
+00018     return;
+00019   }
+00020 
+.fi
+.SS turn::~turn (void)\fC [virtual]\fR
+.PP
+Definition at line 26 of file turn.cc.
+.PP
+.nf
+00027 {
+00028 
+.fi
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int turn::fire (void)\fC [virtual]\fR
+.PP
+Definition at line 35 of file turn.cc.
+.PP
+.nf
+00036 {
+00037   turnOutput->clearRange();
+00038   speedOutput->clearRange();
+00039 
+00040   if ((unsigned int)(input->getIntValue())<threshold) {
+00041     switch(turnMode) {
+00042       case TURN_LEFT:
+00043   speedOutput->setRangeValue(0.0,0.0,20);
+00044   turnOutput->setRangeValue(-0.05,-0.05, 20);  
+00045   Error(ErrorDebug, "turn left");
+00046   break;
+00047       case TURN_RIGHT:
+00048   speedOutput->setRangeValue(0.0,0.0,20);
+00049   turnOutput->setRangeValue(0.05,0.05, 20);  
+00050   Error(ErrorDebug, "turn right");
+00051   break;
+00052       case TURN_STOP:
+00053   speedOutput->setRangeValue(0,0,25);
+00054   turnOutput->setRangeValue(0.0,0.0, 25);  
+00055   Error(ErrorDebug, "turn stop");
+00056   break;
+00057     }
+00058   }
+00059 
+.fi
+.SS char * turn::getClassName (void)\fC [inline, virtual]\fR
+.PP
+Definition at line 25 of file turn.h.
+.PP
+.nf
+00025                                                 { return "turnIM"; }
+00026 
+.fi
+.SS int turn::init (void)\fC [virtual]\fR
+.PP
+Definition at line 30 of file turn.cc.
+.PP
+.nf
+00031 {
+00032   return 0;
+00033 
+.fi
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for HulkRobot from the source code.

@@ -1,0 +1,408 @@
+.TH hulk.cc 3 "29 May 2002" "HulkRobot" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+hulk.cc \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <stdio.h>\fR
+.br
+\fC#include "dfl.h"\fR
+.br
+\fC#include "wheel.h"\fR
+.br
+\fC#include "usonic.h"\fR
+.br
+\fC#include "gyro.h"\fR
+.br
+\fC#include "AvoidObstacle.h"\fR
+.br
+\fC#include "FollowWall.h"\fR
+.br
+\fC#include "AlignWall.h"\fR
+.br
+\fC#include "GoStraight.h"\fR
+.br
+\fC#include "TurnCorner.h"\fR
+.br
+\fC#include "MonitorFront.h"\fR
+.br
+\fC#include "MonitorSide.h"\fR
+.br
+\fC#include "MonitorDoor.h"\fR
+.br
+\fC#include "MonitorCorner.h"\fR
+.br
+.SS Defines
+
+.in +1c
+.ti -1c
+.RI "#define \fBFIRSTLEVEL\fR"
+.br
+.ti -1c
+.RI "#define \fBSECONDLEVEL\fR"
+.br
+.in -1c
+.SS Functions
+
+.in +1c
+.ti -1c
+.RI "void \fBhulkmaincpp\fR (void)"
+.br
+.ti -1c
+.RI "void \fBrunTest\fR (\fBwheel\fR *)"
+.br
+.ti -1c
+.RI "void \fBturnTest\fR (\fBgyro\fR *, \fBwheel\fR *)"
+.br
+.ti -1c
+.RI "void \fBhulkmain\fR ()"
+.br
+.ti -1c
+.RI "void \fB_exit\fR ()"
+.br
+.in -1c
+.SH DEFINE DOCUMENTATION
+.PP 
+.SS #define FIRSTLEVEL
+.PP
+\fBValue:\fR
+.PP
+.nf
+
+.fi
+.PP
+Definition at line 17 of file hulk.cc.
+.SS #define SECONDLEVEL
+.PP
+\fBValue:\fR
+.PP
+.nf
+
+.fi
+.PP
+Definition at line 18 of file hulk.cc.
+.SH FUNCTION DOCUMENTATION
+.PP 
+.SS void _exit ()
+.PP
+Definition at line 52 of file hulk.cc.
+.PP
+.nf
+00053 {
+00054   printf("_exit() called for unknown reason\n");
+00055 
+.fi
+.SS void hulkmain ()
+.PP
+Definition at line 47 of file hulk.cc.
+.PP
+.nf
+00048 {
+00049   hulkmaincpp(); 
+00050 
+.fi
+.SS void hulkmaincpp (void)
+.PP
+Definition at line 60 of file hulk.cc.
+.PP
+Referenced by hulkmain().
+.PP
+.nf
+00061 {
+00062   printf( "Hulk booting\n" );
+00063   initError(ErrorWarning);        // initialize error reporting module
+00064                           // and set error report threshold
+00065 
+00066   gyro *aGyro;
+00067   aGyro= new gyro();
+00068 
+00069   usonic *aUSonic;
+00070   aUSonic = new usonic();
+00071 
+00072   wheel   *aWheel;
+00073   aWheel = new wheel(10, aGyro);
+00074 
+00075   AvoidObstacle    aAvoidObstacle(70, 500,200*1024, aGyro, aUSonic, aWheel);
+00076   FollowWall       aFollowWall(80, 500,200*1024, aGyro, aUSonic, aWheel);
+00077   AlignWall        aAlignWall(100, 500,200*1024, aGyro, aUSonic, aWheel);
+00078   TurnCorner       aTurnCorner(110, 500,200*1024, aGyro, aUSonic, aWheel);
+00079   GoStraight       aGoStraight(120, 500,64*1024, aGyro, aUSonic, aWheel);
+00080 
+00081   MonitorFront     aMonitorFront(60, 500,64*1024, aGyro, aUSonic, aWheel);
+00082   MonitorCorner  aMonitorCorner(40, 50,64*1024, aGyro, aUSonic, aWheel);
+00083   MonitorDoor      aMonitorDoor(50, 50,100*1024, aGyro, aUSonic, aWheel);
+00084   MonitorSide      aMonitorSide(90, 500,64*1024, aGyro, aUSonic, aWheel);
+00085 
+00086 
+00087   printf( "Hulk Command Interpreter Running\n\n");
+00088   printf( "Available commands: A(void) F(ollow) G(oStraight) R(un) T(urn) D(egree) S(top) Q(uit)\n" );
+00089   int quit=0;
+00090   int running=0;
+00091 
+00092   int tid;
+00093 
+00094   // for testing
+00095 /*
+00096   while(1) {
+00097     printf("Current steer heading -> %d\n",aWheel->getSteerHeading());
+00098     taskDelay(2000);
+00099   }
+00100   */
+00101 
+00102 
+00103   char buffer[80];
+00104   while(!quit) {
+00105     printf( "command:\n" );
+00106     gets( buffer );
+00107     switch( buffer[0] ) {
+00108       case 'A':
+00109       case 'a':
+00110   if (!running) {
+00111     taskDelay(1000);
+00112     taskDelay(1000);
+00113     taskDelay(1000);
+00114     taskDelay(1000);
+00115     aAvoidObstacle.init();
+00116     aAvoidObstacle.run();
+00117     running=1;
+00118   }
+00119   break;
+00120 
+00121       case 'W':
+00122       case 'w':
+00123   if (!running) {
+00124     taskDelay(1000);
+00125     taskDelay(1000);
+00126     taskDelay(1000);
+00127     taskDelay(1000);
+00128     aAlignWall.init();
+00129     aAlignWall.run();
+00130     running=1;
+00131   }
+00132   break;
+00133       case 'M':
+00134       case 'm':
+00135   if (!running) {
+00136     taskDelay(1000);
+00137     taskDelay(1000);
+00138     taskDelay(1000);
+00139     taskDelay(1000);
+00140     aMonitorFront.init();
+00141     aMonitorFront.run();
+00142     running=1;
+00143   }
+00144   break;
+00145 
+00146       case 'F':
+00147       case 'f':
+00148   if (!running) {
+00149     taskDelay(1000);
+00150     taskDelay(1000);
+00151     taskDelay(1000);
+00152     taskDelay(1000);
+00153     aFollowWall.init();
+00154     aFollowWall.run();
+00155     running=1;
+00156   }
+00157   break;
+00158       case 'R':
+00159       case 'r':
+00160   if (!running) {
+00161     runTest(aWheel);
+00162     running=1;
+00163   }
+00164   break;
+00165       case 'G':
+00166       case 'g':
+00167   if (!running) {
+00168     aGoStraight.init();
+00169     aGoStraight.run();
+00170     running=1;
+00171   }
+00172   break;
+00173 
+00174       case 'T':
+00175       case 't':
+00176   if (!running) {
+00177     turnTest(aGyro, aWheel);
+00178     running=1;
+00179   }
+00180   break;
+00181       case 'D':
+00182       case 'd':
+00183   if (!running) {
+00184     aWheel->setSteerHeading(-900, -0.08);
+00185     running=1;
+00186   }
+00187   break;
+00188       case 'S':
+00189       case 's':
+00190   if (running) {
+00191     aAvoidObstacle.stop();
+00192     running=0;
+00193   }
+00194   break;
+00195 
+00196       case 'Q':
+00197       case 'q':
+00198   if (running) { 
+00199     running=0;
+00200   }
+00201     taskDelay(1000);
+00202     taskDelay(1000);
+00203     taskDelay(1000);
+00204     taskDelay(1000);
+00205     taskDelay(1000);
+00206   quit=1;
+00207   break;
+00208     }
+00209   }
+00210 
+00211   // for MonitorFront and AvoidObstacle and FollowWall check
+00212 
+00213   aMonitorFront.init();
+00214   aMonitorSide.init();
+00215   aMonitorDoor.init();
+00216   aMonitorCorner.init();
+00217 
+00218   aMonitorDoor.run();
+00219   aMonitorFront.run();
+00220   aMonitorSide.run();
+00221   aMonitorCorner.run();
+00222 
+00223   //aFollowWall.run();
+00224 
+00225   while(1) {
+00226     if((aMonitorDoor.isDoor()==1) && (aMonitorFront.isFront()==0)){
+00227       Error(ErrorWarning,"Trasition to Go Straight");
+00228       Error(ErrorWarning,"Door Detetected");
+00229       aAvoidObstacle.stop();
+00230       aFollowWall.stop();
+00231       aAlignWall.stop();
+00232       aTurnCorner.stop();
+00233 
+00234       aGoStraight.run();
+00235 
+00236     }
+00237     else if((aMonitorCorner.isCorner()==1) && 
+00238                               (aMonitorFront.isFront()==0)){
+00239       Error(ErrorWarning,"Trasition to Turn Corner");
+00240       Error(ErrorWarning,"Corner Detetected");
+00241       aAvoidObstacle.stop();
+00242       aFollowWall.stop();
+00243       aAlignWall.stop();
+00244       aGoStraight.stop();
+00245 
+00246       aTurnCorner.run();
+00247     }
+00248     else if(aMonitorFront.isFront()==1){
+00249       Error(ErrorWarning,"Trasition to Avoid Obstacle");
+00250       aGoStraight.stop();
+00251       aFollowWall.stop();
+00252       aAlignWall.stop();
+00253       aTurnCorner.stop();
+00254 
+00255       aAvoidObstacle.run();
+00256 
+00257     }
+00258     else if((aMonitorSide.isSide()==1)&& (aMonitorFront.isFront()==0)
+00259      && (aMonitorDoor.isDoor()==0) && (aMonitorCorner.isCorner()==0) ){
+00260       Error(ErrorWarning,"Trasition to Align Wall");
+00261       aGoStraight.stop();
+00262       aAvoidObstacle.stop();
+00263       aFollowWall.stop();
+00264       aTurnCorner.stop();
+00265 
+00266       aAlignWall.run();
+00267     }
+00268     else /*if((aMonitorSide.isSide()==0)(aMonitorFront.isFront()==0)*/{
+00269       Error(ErrorWarning,"Trasition to Follow Wall");
+00270       aGoStraight.stop();
+00271       aAvoidObstacle.stop();
+00272       aAlignWall.stop();
+00273       aTurnCorner.stop();
+00274 
+00275       aFollowWall.run();
+00276 
+00277     }
+00278     taskDelay(400);
+00279   }
+00280 
+.fi
+.SS void runTest (\fBwheel\fR * aW)
+.PP
+Definition at line 287 of file hulk.cc.
+.PP
+.nf
+00289 {
+00290   wheel *aWheel;
+00291   aWheel = aW;
+00292   taskDelay(1000);
+00293   aWheel->setSpeed(0.1);
+00294   aWheel->setTurnSpeed(0.0);
+00295   taskDelay(1000);
+00296   taskDelay(1000);
+00297   taskDelay(1000);
+00298   taskDelay(1000);
+00299   taskDelay(1000);
+00300   aWheel->setSpeed(0.0);
+00301   aWheel->setTurnSpeed(0.0);
+00302   /*
+00303   taskDelay(1000);
+00304   taskDelay(1000);
+00305   taskDelay(1000);
+00306   aWheel->setSpeed(0.1);
+00307   aWheel->setTurnSpeed(0.05);
+00308   taskDelay(1000);
+00309   taskDelay(1000);
+00310   taskDelay(1000);
+00311   aWheel->setSpeed(0.1);
+00312   aWheel->setTurnSpeed(-0.1);
+00313   taskDelay(1000);
+00314   taskDelay(1000);
+00315   taskDelay(1000);
+00316   aWheel->setSpeed(0.1);
+00317   aWheel->setTurnSpeed(0.1);
+00318   taskDelay(1000);
+00319   taskDelay(1000);
+00320   taskDelay(1000);
+00321   taskDelay(1000);
+00322   taskDelay(1000);
+00323   aWheel->setSpeed(0.0);
+00324   aWheel->setTurnSpeed(0.0);
+00325   */
+00326 
+00327 
+.fi
+.SS void turnTest (\fBgyro\fR * aG, \fBwheel\fR * aW)
+.PP
+Definition at line 330 of file hulk.cc.
+.PP
+Referenced by hulkmaincpp().
+.PP
+.nf
+00331 {
+00332   wheel *aWheel;
+00333   gyro  *aGyro;
+00334   aWheel= aW;
+00335   aGyro = aG;
+00336   int initialHeading = aGyro->getSteerHeading();
+00337   int finalHeading = initialHeading - 900;
+00338   int temp;
+00339   printf("init is %d final is %d\n ", initialHeading, finalHeading);
+00340 
+00341   aWheel->setSpeed(0.0);
+00342   aWheel->setTurnSpeed(-0.08);
+00343   while(temp > finalHeading) {
+00344     temp = aGyro->getSteerHeading();
+00345     aWheel->setSpeed(0.0);
+00346     aWheel->setTurnSpeed(-0.08);
+00347     taskDelay(1);
+00348   }
+00349 
+.fi
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for HulkRobot from the source code.

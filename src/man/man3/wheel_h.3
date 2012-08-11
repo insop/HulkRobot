@@ -1,0 +1,164 @@
+.TH wheel.h 3 "29 May 2002" "HulkRobot" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+wheel.h \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include "gyro.h"\fR
+.br
+.SS Compounds
+
+.in +1c
+.ti -1c
+.RI "class \fBwheel\fR"
+.br
+.in -1c
+.SS Defines
+
+.in +1c
+.ti -1c
+.RI "#define \fBRIGHTWHEEL\fR  0"
+.br
+.ti -1c
+.RI "#define \fBRIGHTFWDIR\fR  -1"
+.br
+.ti -1c
+.RI "#define \fBRIGHTBWDIR\fR  +1"
+.br
+.ti -1c
+.RI "#define \fBLEFTWHEEL\fR  1"
+.br
+.ti -1c
+.RI "#define \fBLEFTFWDIR\fR  +1"
+.br
+.ti -1c
+.RI "#define \fBLEFTBWDIR\fR  -1"
+.br
+.in -1c
+.SS Variables
+
+.in +1c
+.ti -1c
+.RI "const float \fBMaxSpeed\fR = 1.0"
+.br
+.ti -1c
+.RI "const float \fBMaxTurn\fR = 1.0"
+.br
+.ti -1c
+.RI "const float \fBMaxAcc\fR = 0.2"
+.br
+.ti -1c
+.RI "const float \fBMaxRAcc\fR = 0.2"
+.br
+.ti -1c
+.RI "const float \fBSpeedScaler\fR = 150.0"
+.br
+.ti -1c
+.RI "const float \fBM_PI\fR = 3.141592654"
+.br
+.ti -1c
+.RI "const float \fBRD_WHEEL\fR = 0.102"
+.br
+.ti -1c
+.RI "const float \fBRW_RADIUS\fR = 0.100"
+.br
+.ti -1c
+.RI "const float \fBLW_RADIUS\fR = 0.104"
+.br
+.ti -1c
+.RI "const float \fBN_GEAR\fR = 36.0"
+.br
+.ti -1c
+.RI "const float \fBENC_REV\fR = 2000.0"
+.br
+.ti -1c
+.RI "const float \fBENC2M\fR = (2*\fBM_PI\fR*\fBRD_WHEEL\fR)/(\fBENC_REV\fR*\fBN_GEAR\fR)"
+.br
+.ti -1c
+.RI "const float \fBR_ENC2M\fR = (2*\fBM_PI\fR*\fBRW_RADIUS\fR)/(\fBENC_REV\fR*\fBN_GEAR\fR)"
+.br
+.ti -1c
+.RI "const float \fBL_ENC2M\fR = (2*\fBM_PI\fR*\fBLW_RADIUS\fR)/(\fBENC_REV\fR*\fBN_GEAR\fR)"
+.br
+.ti -1c
+.RI "const float \fBVM2ENC\fR = (1./(\fBENC2M\fR*1000.))"
+.br
+.ti -1c
+.RI "const float \fBWHEELBASE\fR = 0.2325"
+.br
+.in -1c
+.SH DEFINE DOCUMENTATION
+.PP 
+.SS #define LEFTBWDIR  -1
+.PP
+Definition at line 11 of file wheel.h.
+.SS #define LEFTFWDIR  +1
+.PP
+Definition at line 10 of file wheel.h.
+.SS #define LEFTWHEEL  1
+.PP
+Definition at line 9 of file wheel.h.
+.SS #define RIGHTBWDIR  +1
+.PP
+Definition at line 8 of file wheel.h.
+.SS #define RIGHTFWDIR  -1
+.PP
+Definition at line 7 of file wheel.h.
+.SS #define RIGHTWHEEL  0
+.PP
+Definition at line 6 of file wheel.h.
+.SH VARIABLE DOCUMENTATION
+.PP 
+.SS const float ENC2M = (2*\fBM_PI\fR*\fBRD_WHEEL\fR)/(\fBENC_REV\fR*\fBN_GEAR\fR)
+.PP
+Definition at line 26 of file wheel.h.
+.SS const float ENC_REV = 2000.0
+.PP
+Definition at line 25 of file wheel.h.
+.SS const float LW_RADIUS = 0.104
+.PP
+Definition at line 23 of file wheel.h.
+.SS const float L_ENC2M = (2*\fBM_PI\fR*\fBLW_RADIUS\fR)/(\fBENC_REV\fR*\fBN_GEAR\fR)
+.PP
+Definition at line 28 of file wheel.h.
+.SS const float M_PI = 3.141592654
+.PP
+Definition at line 20 of file wheel.h.
+.SS const float MaxAcc = 0.2
+.PP
+Definition at line 8 of file robot.h.
+.SS const float MaxRAcc = 0.2
+.PP
+Definition at line 9 of file robot.h.
+.SS const float MaxSpeed = 1.0
+.PP
+Definition at line 6 of file robot.h.
+.SS const float MaxTurn = 1.0
+.PP
+Definition at line 7 of file robot.h.
+.SS const float N_GEAR = 36.0
+.PP
+Definition at line 24 of file wheel.h.
+.SS const float RD_WHEEL = 0.102
+.PP
+Definition at line 21 of file wheel.h.
+.SS const float RW_RADIUS = 0.100
+.PP
+Definition at line 22 of file wheel.h.
+.SS const float R_ENC2M = (2*\fBM_PI\fR*\fBRW_RADIUS\fR)/(\fBENC_REV\fR*\fBN_GEAR\fR)
+.PP
+Definition at line 27 of file wheel.h.
+.SS const float SpeedScaler = 150.0
+.PP
+Definition at line 10 of file robot.h.
+.SS const float VM2ENC = (1./(\fBENC2M\fR*1000.))
+.PP
+Definition at line 29 of file wheel.h.
+.SS const float WHEELBASE = 0.2325
+.PP
+Definition at line 30 of file wheel.h.
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for HulkRobot from the source code.

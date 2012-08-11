@@ -1,0 +1,70 @@
+.TH speed.cc 3 "29 May 2002" "HulkRobot" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+speed.cc \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include "speed.h"\fR
+.br
+.SS Functions
+
+.in +1c
+.ti -1c
+.RI "void \fBsetup_parm\fR (int axis, double kp, double ki)"
+.br
+.ti -1c
+.RI "void \fBspeed_command\fR (int axis, int speed)"
+.br
+.ti -1c
+.RI "int \fBget_speed\fR (int axis)"
+.br
+.in -1c
+.SS Variables
+
+.in +1c
+.ti -1c
+.RI "struct \fBdsp_str\fR* \fBdsp\fR = (struct \fBdsp_str\fR *) 0xfb000000"
+.br
+.in -1c
+.SH FUNCTION DOCUMENTATION
+.PP 
+.SS int get_speed (int axis)
+.PP
+Definition at line 21 of file speed.cc.
+.PP
+.nf
+00022 {
+00023   return dsp->speed[axis].cur_vel;
+00024 
+.fi
+.SS void setup_parm (int axis, double kp, double ki)
+.PP
+Definition at line 6 of file speed.cc.
+.PP
+.nf
+00007 {
+00008   dsp->speed[axis].mode = SETUP;
+00009   dsp->speed[axis].kp = (int)(kp*1000.);
+00010   dsp->speed[axis].ki = (int)(ki*1000.);
+00011 
+.fi
+.SS void speed_command (int axis, int speed)
+.PP
+Definition at line 14 of file speed.cc.
+.PP
+.nf
+00015 {
+00016   dsp->speed[axis].mode = COMMAND;
+00017   dsp->speed[axis].speed = speed;
+00018 
+.fi
+.SH VARIABLE DOCUMENTATION
+.PP 
+.SS struct \fBdsp_str\fR * dsp = (struct \fBdsp_str\fR *) 0xfb000000
+.PP
+Definition at line 217 of file robot/robot.cc.
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for HulkRobot from the source code.

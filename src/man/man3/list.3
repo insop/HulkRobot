@@ -1,0 +1,131 @@
+.TH list 3 "29 May 2002" "HulkRobot" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+list \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <list.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBlist\fR (int _blockSize=\fBListDefaultBlockSize\fR)"
+.br
+.ti -1c
+.RI "\fB~list\fR ()"
+.br
+.ti -1c
+.RI "Type* \fBoperator[]\fR (int index)"
+.br
+.ti -1c
+.RI "int \fBgetNumItems\fR (void)"
+.br
+.ti -1c
+.RI "Type* \fBaddItem\fR (Type *item)"
+.br
+.ti -1c
+.RI "void \fBremoveItem\fR (int index)"
+.br
+.ti -1c
+.RI "void \fBremoveItem\fR (Type *item)"
+.br
+.ti -1c
+.RI "void \fBremoveAllItems\fR (void)"
+.br
+.in -1c
+
+.SS template<class Type>  class list
+
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<class Type> list<Type>::list<Type> (int _blockSize = \fBListDefaultBlockSize\fR)\fC [inline]\fR
+.PP
+Definition at line 24 of file list.h.
+.PP
+.nf
+00025   { 
+00026     blockSize=_blockSize; 
+00027     numItems=maxItems=0;
+00028     items=(Type **)NULL;
+00029 
+.fi
+.SS template<class Type> list<Type>::~list<Type> ()\fC [inline]\fR
+.PP
+Definition at line 31 of file list.h.
+.PP
+.nf
+00031                                 { free(items);                    }
+00032 
+.fi
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<class Type> Type * list<Type>::addItem (Type * item)\fC [inline]\fR
+.PP
+Definition at line 36 of file list.h.
+.PP
+.nf
+00037   {
+00038     if (numItems>=maxItems) {
+00039       maxItems+=blockSize;
+00040       if (!items)
+00041   items=(Type **)malloc(sizeof(Type *)*maxItems);
+00042       else
+00043   items=(Type **)realloc(items, sizeof(Type *)*maxItems);
+00044     }
+00045 
+.fi
+.SS template<class Type> int list<Type>::getNumItems (void)\fC [inline]\fR
+.PP
+Definition at line 34 of file list.h.
+.PP
+.nf
+00034                                 { return numItems;                }
+00035 
+.fi
+.SS template<class Type> Type * list<Type>::operator[] (int index)\fC [inline]\fR
+.PP
+Definition at line 33 of file list.h.
+.PP
+.nf
+00033                                 { return items[index];            }
+00034 
+.fi
+.SS template<class Type> void list<Type>::removeAllItems (void)\fC [inline]\fR
+.PP
+Definition at line 61 of file list.h.
+.PP
+.nf
+00062   {
+00063     numItems=0;
+00064 
+.fi
+.SS template<class Type> void list<Type>::removeItem (Type * item)\fC [inline]\fR
+.PP
+Definition at line 54 of file list.h.
+.PP
+.nf
+00055   {
+00056     for(int i=0;i<numItems;i++)
+00057       if (items[i]==item) break;
+00058     if (i<numItems) removeItem(i);
+00059 
+.fi
+.SS template<class Type> void list<Type>::removeItem (int index)\fC [inline]\fR
+.PP
+Definition at line 49 of file list.h.
+.PP
+Referenced by removeItem().
+.PP
+.nf
+00050   {
+00051     memcpy(&items[index], &items[index+1], (--numItems)-index);
+00052 
+.fi
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for HulkRobot from the source code.

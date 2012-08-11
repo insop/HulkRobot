@@ -1,0 +1,231 @@
+.TH wheel 3 "29 May 2002" "HulkRobot" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+wheel \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <wheel.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBwheel\fR (int samplingPeriod, \fBgyro\fR *aG)"
+.br
+.ti -1c
+.RI "virtual \fB~wheel\fR ()"
+.br
+.ti -1c
+.RI "\fBwheel\fR (\fBgyro\fR *aG, int samplingPeriod)"
+.br
+.ti -1c
+.RI "virtual \fB~wheel\fR ()"
+.br
+.in -1c
+.SS Static Public Methods
+
+.in +1c
+.ti -1c
+.RI "int \fBsetSpeed\fR (float _targetSpeed)"
+.br
+.ti -1c
+.RI "int \fBsetTurnSpeed\fR (float _targetTurn)"
+.br
+.ti -1c
+.RI "int \fBgetSteerHeading\fR ()"
+.br
+.ti -1c
+.RI "int \fBsetSteerHeading\fR (int _targetTurnDegree, float _targetTurn, float _targetSpeed=0.0)"
+.br
+.ti -1c
+.RI "int \fBsetSpeed\fR (float _targetSpeed)"
+.br
+.ti -1c
+.RI "int \fBsetTurnSpeed\fR (float _targetTurn)"
+.br
+.ti -1c
+.RI "int \fBsetSteerHeading\fR (int _targetTurnDegree, float _targetTurn, float _targetSpeed=0.0)"
+.br
+.in -1c
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS wheel::wheel (int samplingPeriod, \fBgyro\fR * aG)
+.PP
+Definition at line 54 of file wheel.cc.
+.PP
+Referenced by SpeedScaler().
+.PP
+.nf
+00055 {
+00056   aGyro = aG;
+00057   dspInit();
+00058   speed_command(0,0);
+00059   speed_command(1,0);
+00060 
+00061   maxSpeedDiff            = MaxAcc*(float)samplingPeriod/1000.0;
+00062   maxTurnDiff             = MaxRAcc*(float)samplingPeriod/1000.0;
+00063   Error2(ErrorDebug, "maxSpeedDiff=%f, maxTurnDiff=%f",
+00064                   maxSpeedDiff, maxTurnDiff);
+00065   lastSpeed               = 0.0;
+00066   lastTurn                = 0.0;
+00067   targetSpeed   = 0;
+00068   targetTurn      = 0;
+00069 
+00070   delayTicks      = samplingPeriod/OSTickPeriod;
+00071 
+00072   if(numOpen==0) {
+00073     createScanTask();
+00074   }
+00075 
+.fi
+.SS wheel::~wheel ()\fC [virtual]\fR
+.PP
+Definition at line 107 of file wheel.cc.
+.PP
+Referenced by SpeedScaler().
+.PP
+.nf
+00108 {
+00109   numOpen--;
+00110   if(numOpen==0)
+00111     terminateScanTask();
+00112 
+.fi
+.SS wheel::wheel (\fBgyro\fR * aG, int samplingPeriod)
+.PP
+Definition at line 54 of file robot/robot.cc.
+.PP
+.nf
+00055 {
+00056   aGyro = aG;
+00057   dspInit();
+00058   speed_command(0,0);
+00059   speed_command(1,0);
+00060 
+00061   maxSpeedDiff            = MaxAcc*(float)samplingPeriod/1000.0;
+00062   maxTurnDiff             = MaxRAcc*(float)samplingPeriod/1000.0;
+00063   Error2(ErrorDebug, "maxSpeedDiff=%f, maxTurnDiff=%f",
+00064                   maxSpeedDiff, maxTurnDiff);
+00065   lastSpeed               = 0.0;
+00066   lastTurn                = 0.0;
+00067   targetSpeed   = 0;
+00068   targetTurn      = 0;
+00069 
+00070   delayTicks      = samplingPeriod/OSTickPeriod;
+00071 
+00072   if(numOpen==0) {
+00073     createScanTask();
+00074   }
+00075 
+.fi
+.SS wheel::~wheel ()\fC [virtual]\fR
+.PP
+Definition at line 107 of file wheel.cc.
+.PP
+.nf
+00108 {
+00109   numOpen--;
+00110   if(numOpen==0)
+00111     terminateScanTask();
+00112 
+.fi
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int wheel::getSteerHeading (void)\fC [static]\fR
+.PP
+Definition at line 148 of file wheel.cc.
+.PP
+.nf
+00149 {
+00150   return aGyro->getSteerHeading();
+00151 
+.fi
+.SS int wheel::setSpeed (float _targetSpeed)\fC [static]\fR
+.PP
+Definition at line 114 of file wheel.cc.
+.PP
+.nf
+00115 {
+00116   targetSpeed = _targetSpeed;
+00117 
+.fi
+.SS int wheel::setSpeed (float _targetSpeed)\fC [static]\fR
+.PP
+Definition at line 114 of file wheel.cc.
+.PP
+Referenced by SpeedScaler(), runTest(), and turnTest().
+.PP
+.nf
+00115 {
+00116   targetSpeed = _targetSpeed;
+00117 
+.fi
+.SS int wheel::setSteerHeading (int _targetTurnDegree, float _targetTurn, float _targetSpeed = 0.0)\fC [static]\fR
+.PP
+Definition at line 126 of file wheel.cc.
+.PP
+.nf
+00128 {
+00129   int initialHeading = aGyro->getSteerHeading();
+00130   int finalHeading = initialHeading + _targetTurnDegree;
+00131   Error2(ErrorWarning,"ini %d, final %d",initialHeading,finalHeading);
+00132   int temp = initialHeading;
+00133   targetSpeed = _targetSpeed;
+00134   targetTurn = _targetTurn;
+00135   while(temp > finalHeading)  {
+00136     temp = aGyro->getSteerHeading();
+00137     targetSpeed = _targetSpeed;
+00138     targetTurn = _targetTurn;
+00139     taskDelay(1);
+00140   }
+00141 
+.fi
+.SS int wheel::setSteerHeading (int _targetTurnDegree, float _targetTurn, float _targetSpeed = 0.0)\fC [static]\fR
+.PP
+Definition at line 126 of file wheel.cc.
+.PP
+Referenced by SpeedScaler(), hulkmaincpp(), and runTest().
+.PP
+.nf
+00128 {
+00129   int initialHeading = aGyro->getSteerHeading();
+00130   int finalHeading = initialHeading + _targetTurnDegree;
+00131   Error2(ErrorWarning,"ini %d, final %d",initialHeading,finalHeading);
+00132   int temp = initialHeading;
+00133   targetSpeed = _targetSpeed;
+00134   targetTurn = _targetTurn;
+00135   while(temp > finalHeading)  {
+00136     temp = aGyro->getSteerHeading();
+00137     targetSpeed = _targetSpeed;
+00138     targetTurn = _targetTurn;
+00139     taskDelay(1);
+00140   }
+00141 
+.fi
+.SS int wheel::setTurnSpeed (float _targetTurn)\fC [static]\fR
+.PP
+Definition at line 120 of file wheel.cc.
+.PP
+.nf
+00121 {
+00122   targetTurn = _targetTurn;
+00123 
+.fi
+.SS int wheel::setTurnSpeed (float _targetTurn)\fC [static]\fR
+.PP
+Definition at line 120 of file wheel.cc.
+.PP
+Referenced by SpeedScaler(), runTest(), and turnTest().
+.PP
+.nf
+00121 {
+00122   targetTurn = _targetTurn;
+00123 
+.fi
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for HulkRobot from the source code.

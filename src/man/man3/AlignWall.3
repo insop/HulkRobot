@@ -1,0 +1,147 @@
+.TH AlignWall 3 "29 May 2002" "HulkRobot" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+AlignWall \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <AlignWall.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBAlignWall\fR (int priority, int samplingPeriod, int stackSize, \fBgyro\fR *aG, \fBusonic\fR *aU, \fBwheel\fR *aW)"
+.br
+.ti -1c
+.RI "\fB~AlignWall\fR ()"
+.br
+.ti -1c
+.RI "int \fBinit\fR (void)"
+.br
+.ti -1c
+.RI "int \fBstep\fR (void)"
+.br
+.ti -1c
+.RI "int \fBrun\fR (void)"
+.br
+.ti -1c
+.RI "int \fBstop\fR (void)"
+.br
+.in -1c
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS AlignWall::AlignWall (int _priority, int _samplingPeriod, int stackSize, \fBgyro\fR * aG, \fBusonic\fR * aU, \fBwheel\fR * aW)
+.PP
+Definition at line 9 of file AlignWall.cc.
+.PP
+.nf
+00011 {
+00012 
+00013   Error( ErrorDebug, "AlignWall initializing");
+00014   priority        = _priority;
+00015   samplingPeriod= _samplingPeriod;
+00016   delayTicks      = samplingPeriod/OSTickPeriod;
+00017 
+00018   taskMode        = TaskStopped;
+00019   taskSem = semBCreate(SEM_Q_PRIORITY, SEM_EMPTY);
+00020   tickerSem       = semBCreate(SEM_Q_PRIORITY, SEM_EMPTY);
+00021   taskExitSem     = semBCreate(SEM_Q_PRIORITY, SEM_EMPTY);
+00022   tickerExitSem   = semBCreate(SEM_Q_PRIORITY, SEM_EMPTY);
+00023 
+00024   aGyro = aG;
+00025   aUSonic = aU;
+00026   aWheel = aW;
+00027 
+00028   Assert( taskSem && taskExitSem && tickerSem && tickerExitSem );
+00029 
+00030   taskId  = taskSpawn("AlignWall", priority, VX_FP_TASK, 
+00031                           stackSize, (FUNCPTR) taskModuleStub,
+00032                           (int) this, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+00033   Assert(taskId!=ERROR);
+00034 
+00035   semTake(taskExitSem, WAIT_FOREVER);
+00036   
+00037   tickerTaskId    = taskSpawn("AlignWall", TickerTaskPriority, 0, 
+00038                           TickerTaskStackSize,
+00039                           (FUNCPTR) taskModuleTickerStub,
+00040                           (int) this,
+00041                           0, 0, 0, 0,
+00042                           0, 0, 0, 0, 0);
+00043   Assert(tickerTaskId!=ERROR);
+00044   semTake(tickerExitSem, WAIT_FOREVER);
+00045 
+.fi
+.SS AlignWall::~AlignWall ()
+.PP
+Definition at line 47 of file AlignWall.cc.
+.PP
+.nf
+00048 {
+00049   taskMode=TaskTerminate;
+00050   semGive(tickerSem);
+00051   semGive(taskSem);
+00052   semTake(tickerExitSem, WAIT_FOREVER);
+00053   semTake(taskExitSem, WAIT_FOREVER);
+00054   semDelete(taskSem);
+00055   semDelete(taskExitSem);
+00056   semDelete(tickerSem);
+00057   semDelete(tickerExitSem);
+00058 
+00059   Error( ErrorDebug, "AlignWall destroyed");
+00060 
+.fi
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int AlignWall::init (void)
+.PP
+Definition at line 174 of file AlignWall.cc.
+.PP
+Referenced by hulkmaincpp().
+.PP
+.nf
+00175 {
+00176 
+.fi
+.SS int AlignWall::run (void)
+.PP
+Definition at line 185 of file AlignWall.cc.
+.PP
+Referenced by hulkmaincpp().
+.PP
+.nf
+00186 {
+00187   taskMode=TaskRunning;
+00188   semGive(tickerSem);
+00189   return 0;
+00190 
+.fi
+.SS int AlignWall::step (void)
+.PP
+Definition at line 178 of file AlignWall.cc.
+.PP
+.nf
+00179 {
+00180   taskMode=TaskStep;
+00181   semGive(taskSem);
+00182   return 0;
+00183 
+.fi
+.SS int AlignWall::stop (void)
+.PP
+Definition at line 192 of file AlignWall.cc.
+.PP
+Referenced by hulkmaincpp().
+.PP
+.nf
+00193 {
+00194   taskMode=TaskStopped;
+00195   return 0;
+00196 
+.fi
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for HulkRobot from the source code.

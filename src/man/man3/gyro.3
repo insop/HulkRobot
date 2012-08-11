@@ -1,0 +1,65 @@
+.TH gyro 3 "29 May 2002" "HulkRobot" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+gyro \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <gyro.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBgyro\fR ()"
+.br
+.ti -1c
+.RI "virtual \fB~gyro\fR ()"
+.br
+.ti -1c
+.RI "int \fBgetSteerHeading\fR ()"
+.br
+.in -1c
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS gyro::gyro ()
+.PP
+Definition at line 27 of file gyro.cc.
+.PP
+.nf
+00028 {
+00029   if(numOpen==0)  {
+00030     createScanTask();
+00031   }
+00032 
+.fi
+.SS gyro::~gyro ()\fC [virtual]\fR
+.PP
+Definition at line 36 of file gyro.cc.
+.PP
+.nf
+00037 {
+00038   numOpen--;
+00039   if(numOpen==0)
+00040     terminateScanTask();
+00041 
+.fi
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int gyro::getSteerHeading (void)
+.PP
+Definition at line 116 of file gyro.cc.
+.PP
+Referenced by wheel::getSteerHeading(), wheel::setSteerHeading(), and turnTest().
+.PP
+.nf
+00117 {
+00118    return azimuth;
+00119 
+.fi
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for HulkRobot from the source code.

@@ -1,0 +1,205 @@
+.TH wheel.cc 3 "29 May 2002" "HulkRobot" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+wheel.cc \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include "dfl.h"\fR
+.br
+\fC#include "wheel.h"\fR
+.br
+\fC#include "speed.h"\fR
+.br
+.SS Defines
+
+.in +1c
+.ti -1c
+.RI "#define \fB_MODULE_NAME_\fR  \fBwheel\fR"
+.br
+.ti -1c
+.RI "#define \fBREAL_HARDWARE\fR"
+.br
+.in -1c
+.SS Functions
+
+.in +1c
+.ti -1c
+.RI "void \fBdspInit\fR (void)"
+.br
+.ti -1c
+.RI "int \fBwheelInitialize\fR (void)"
+.br
+.ti -1c
+.RI "int \fBwheelFinish\fR (void)"
+.br
+.ti -1c
+.RI "void \fBsetup_parm\fR (int axis, double kp, double ki)"
+.br
+.ti -1c
+.RI "void \fBspeed_command\fR (int axis, int speed)"
+.br
+.ti -1c
+.RI "int \fBget_speed\fR (int axis)"
+.br
+.ti -1c
+.RI "int \fBget_position\fR (int axis)"
+.br
+.ti -1c
+.RI "int \fBspeed_loop\fR ()"
+.br
+.ti -1c
+.RI "int \fBspeed1\fR ()"
+.br
+.ti -1c
+.RI "int \fBspeed2\fR ()"
+.br
+.ti -1c
+.RI "int \fBstop\fR ()"
+.br
+.in -1c
+.SS Variables
+
+.in +1c
+.ti -1c
+.RI "struct \fBdsp_str\fR* \fBdsp\fR = (struct \fBdsp_str\fR *) 0xfb000000"
+.br
+.in -1c
+.SH DEFINE DOCUMENTATION
+.PP 
+.SS #define REAL_HARDWARE
+.PP
+Definition at line 20 of file wheel.cc.
+.SS #define _MODULE_NAME_  \fBwheel\fR
+.PP
+Definition at line 19 of file wheel.cc.
+.SH FUNCTION DOCUMENTATION
+.PP 
+.SS void dspInit (void)
+.PP
+Definition at line 44 of file wheel.cc.
+.PP
+Referenced by wheel::wheel(), and wheelInitialize().
+.PP
+.nf
+00045 {
+00046 #ifdef REAL_HARDWARE
+00047 #endif
+00048 
+.fi
+.SS int get_position (int axis)
+.PP
+Definition at line 247 of file wheel.cc.
+.PP
+.nf
+00248 {
+00249   return dsp->speed[axis].cur_pos;
+00250 
+.fi
+.SS int get_speed (int axis)
+.PP
+Definition at line 241 of file wheel.cc.
+.PP
+.nf
+00242 {
+00243   return dsp->speed[axis].cur_vel;
+00244 
+.fi
+.SS void setup_parm (int axis, double kp, double ki)
+.PP
+Definition at line 226 of file wheel.cc.
+.PP
+.nf
+00227 {
+00228   dsp->speed[axis].mode = SETUP;
+00229   dsp->speed[axis].kp = (int)(kp*1000.);
+00230   dsp->speed[axis].ki = (int)(ki*1000.);
+00231 
+.fi
+.SS int speed1 ()
+.PP
+Definition at line 263 of file wheel.cc.
+.PP
+.nf
+00264 {
+00265   while(1) {
+00266   speed_command(0,-10);
+00267   taskDelay(100);
+00268   }
+00269 
+.fi
+.SS int speed2 ()
+.PP
+Definition at line 272 of file wheel.cc.
+.PP
+.nf
+00273 {
+00274   while(1) {
+00275   speed_command(1,-10);
+00276   taskDelay(100);
+00277   }
+00278 
+.fi
+.SS void speed_command (int axis, int speed)
+.PP
+Definition at line 234 of file wheel.cc.
+.PP
+.nf
+00235 {
+00236   dsp->speed[axis].speed = speed;
+00237   dsp->speed[axis].mode = COMMAND;
+00238 
+.fi
+.SS int speed_loop ()
+.PP
+Definition at line 253 of file wheel.cc.
+.PP
+.nf
+00254 {
+00255   while(1) {
+00256   speed_command(0, -10);
+00257   speed_command(1,10);
+00258   taskDelay(100);
+00259   }
+00260 
+.fi
+.SS int stop ()
+.PP
+Definition at line 281 of file wheel.cc.
+.PP
+.nf
+00282 {
+00283   speed_command(0,0);
+00284   speed_command(1,0);
+00285 
+.fi
+.SS int wheelFinish (void)
+.PP
+Definition at line 213 of file wheel.cc.
+.PP
+.nf
+00214 {
+00215   return 0;
+00216 
+.fi
+.SS int wheelInitialize (void)
+.PP
+Definition at line 205 of file wheel.cc.
+.PP
+.nf
+00206 {
+00207   dspInit();
+00208   speed_command(0, 0);
+00209   speed_command(1, 0);
+00210   return 0;
+00211 
+.fi
+.SH VARIABLE DOCUMENTATION
+.PP 
+.SS struct \fBdsp_str\fR* dsp = (struct \fBdsp_str\fR *) 0xfb000000
+.PP
+Definition at line 223 of file wheel.cc.
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for HulkRobot from the source code.

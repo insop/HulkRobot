@@ -1,0 +1,161 @@
+.TH MonitorFront 3 "29 May 2002" "HulkRobot" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+MonitorFront \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <MonitorFront.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBMonitorFront\fR (int priority, int samplingPeriod, int stackSize, \fBgyro\fR *aG, \fBusonic\fR *aU, \fBwheel\fR *aW)"
+.br
+.ti -1c
+.RI "\fB~MonitorFront\fR ()"
+.br
+.ti -1c
+.RI "int \fBinit\fR (void)"
+.br
+.ti -1c
+.RI "int \fBstep\fR (void)"
+.br
+.ti -1c
+.RI "int \fBrun\fR (void)"
+.br
+.ti -1c
+.RI "int \fBstop\fR (void)"
+.br
+.ti -1c
+.RI "int \fBisFront\fR (void)"
+.br
+.in -1c
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS MonitorFront::MonitorFront (int _priority, int _samplingPeriod, int stackSize, \fBgyro\fR * aG, \fBusonic\fR * aU, \fBwheel\fR * aW)
+.PP
+Definition at line 18 of file MonitorFront.cc.
+.PP
+.nf
+00020 {
+00021 
+00022   Error( ErrorDebug, "MonitorFront initializing");
+00023   priority        = _priority;
+00024   samplingPeriod= _samplingPeriod;
+00025   delayTicks      = samplingPeriod/OSTickPeriod;
+00026 
+00027   taskMode        = TaskStopped;
+00028   taskSem = semBCreate(SEM_Q_PRIORITY, SEM_EMPTY);
+00029   tickerSem       = semBCreate(SEM_Q_PRIORITY, SEM_EMPTY);
+00030   taskExitSem     = semBCreate(SEM_Q_PRIORITY, SEM_EMPTY);
+00031   tickerExitSem   = semBCreate(SEM_Q_PRIORITY, SEM_EMPTY);
+00032 
+00033   aGyro = aG;
+00034   aUSonic = aU;
+00035   aWheel = aW;
+00036 
+00037   Assert( taskSem && taskExitSem && tickerSem && tickerExitSem );
+00038 
+00039   taskId  = taskSpawn("MonitorFront", priority, VX_FP_TASK, 
+00040                           stackSize, (FUNCPTR) taskModuleStub,
+00041                           (int) this, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+00042   Assert(taskId!=ERROR);
+00043 
+00044   semTake(taskExitSem, WAIT_FOREVER);
+00045   
+00046   tickerTaskId    = taskSpawn("MonitorFront", TickerTaskPriority, 0, 
+00047                           TickerTaskStackSize,
+00048                           (FUNCPTR) taskModuleTickerStub,
+00049                           (int) this,
+00050                           0, 0, 0, 0,
+00051                           0, 0, 0, 0, 0);
+00052   Assert(tickerTaskId!=ERROR);
+00053   semTake(tickerExitSem, WAIT_FOREVER);
+00054 
+00055   front = 0; // set initial monitor signal ,false
+00056 
+.fi
+.SS MonitorFront::~MonitorFront ()
+.PP
+Definition at line 58 of file MonitorFront.cc.
+.PP
+.nf
+00059 {
+00060   taskMode=TaskTerminate;
+00061   semGive(tickerSem);
+00062   semGive(taskSem);
+00063   semTake(tickerExitSem, WAIT_FOREVER);
+00064   semTake(taskExitSem, WAIT_FOREVER);
+00065   semDelete(taskSem);
+00066   semDelete(taskExitSem);
+00067   semDelete(tickerSem);
+00068   semDelete(tickerExitSem);
+00069 
+00070   Error( ErrorDebug, "MonitorFront destroyed");
+00071 
+.fi
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int MonitorFront::init (void)
+.PP
+Definition at line 151 of file MonitorFront.cc.
+.PP
+Referenced by hulkmaincpp().
+.PP
+.nf
+00152 {
+00153 
+.fi
+.SS int MonitorFront::isFront (void)
+.PP
+Definition at line 145 of file MonitorFront.cc.
+.PP
+Referenced by hulkmaincpp().
+.PP
+.nf
+00146 {
+00147   return front;
+00148 
+.fi
+.SS int MonitorFront::run (void)
+.PP
+Definition at line 162 of file MonitorFront.cc.
+.PP
+Referenced by hulkmaincpp().
+.PP
+.nf
+00163 {
+00164   taskMode=TaskRunning;
+00165   semGive(tickerSem);
+00166   return 0;
+00167 
+.fi
+.SS int MonitorFront::step (void)
+.PP
+Definition at line 155 of file MonitorFront.cc.
+.PP
+.nf
+00156 {
+00157   taskMode=TaskStep;
+00158   semGive(taskSem);
+00159   return 0;
+00160 
+.fi
+.SS int MonitorFront::stop (void)
+.PP
+Definition at line 169 of file MonitorFront.cc.
+.PP
+.nf
+00170 {
+00171   taskMode=TaskStopped;
+00172   return 0;
+00173 
+.fi
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for HulkRobot from the source code.

@@ -1,0 +1,8 @@
+The usage of doxygen
+
+1. Edit 'Doxygen' file. If you cannot find it, then ask
+isong@uwaterloo.ca
+2. Change PROJECT_NAME in 'Doxygen' file
+3. If you also browse source code, then set CLASS_DIAGRAMS yes
+4. Put your source code folders (directories) at INPUT
+5. Run 'doxygen' at the same folder where 'Doxygen' is.

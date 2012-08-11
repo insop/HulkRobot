@@ -1,0 +1,147 @@
+.TH AvoidObstacle 3 "29 May 2002" "HulkRobot" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+AvoidObstacle \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <AvoidObstacle.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBAvoidObstacle\fR (int priority, int samplingPeriod, int stackSize, \fBgyro\fR *aG, \fBusonic\fR *aU, \fBwheel\fR *aW)"
+.br
+.ti -1c
+.RI "\fB~AvoidObstacle\fR ()"
+.br
+.ti -1c
+.RI "int \fBinit\fR (void)"
+.br
+.ti -1c
+.RI "int \fBstep\fR (void)"
+.br
+.ti -1c
+.RI "int \fBrun\fR (void)"
+.br
+.ti -1c
+.RI "int \fBstop\fR (void)"
+.br
+.in -1c
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS AvoidObstacle::AvoidObstacle (int _priority, int _samplingPeriod, int stackSize, \fBgyro\fR * aG, \fBusonic\fR * aU, \fBwheel\fR * aW)
+.PP
+Definition at line 18 of file AvoidObstacle.cc.
+.PP
+.nf
+00020 {
+00021 
+00022   Error( ErrorDebug, "AvoidObstacle initializing");
+00023   priority        = _priority;
+00024   samplingPeriod= _samplingPeriod;
+00025   delayTicks      = samplingPeriod/OSTickPeriod;
+00026 
+00027   taskMode        = TaskStopped;
+00028   taskSem = semBCreate(SEM_Q_PRIORITY, SEM_EMPTY);
+00029   tickerSem       = semBCreate(SEM_Q_PRIORITY, SEM_EMPTY);
+00030   taskExitSem     = semBCreate(SEM_Q_PRIORITY, SEM_EMPTY);
+00031   tickerExitSem   = semBCreate(SEM_Q_PRIORITY, SEM_EMPTY);
+00032 
+00033   aGyro = aG;
+00034   aUSonic = aU;
+00035   aWheel = aW;
+00036 
+00037   Assert( taskSem && taskExitSem && tickerSem && tickerExitSem );
+00038 
+00039   taskId  = taskSpawn("AvoidObstacle", priority, VX_FP_TASK, 
+00040                           stackSize, (FUNCPTR) taskModuleStub,
+00041                           (int) this, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+00042   Assert(taskId!=ERROR);
+00043 
+00044   semTake(taskExitSem, WAIT_FOREVER);
+00045   
+00046   tickerTaskId    = taskSpawn("AvoidObstacle", TickerTaskPriority, 0, 
+00047                           TickerTaskStackSize,
+00048                           (FUNCPTR) taskModuleTickerStub,
+00049                           (int) this,
+00050                           0, 0, 0, 0,
+00051                           0, 0, 0, 0, 0);
+00052   Assert(tickerTaskId!=ERROR);
+00053   semTake(tickerExitSem, WAIT_FOREVER);
+00054 
+.fi
+.SS AvoidObstacle::~AvoidObstacle ()
+.PP
+Definition at line 56 of file AvoidObstacle.cc.
+.PP
+.nf
+00057 {
+00058   taskMode=TaskTerminate;
+00059   semGive(tickerSem);
+00060   semGive(taskSem);
+00061   semTake(tickerExitSem, WAIT_FOREVER);
+00062   semTake(taskExitSem, WAIT_FOREVER);
+00063   semDelete(taskSem);
+00064   semDelete(taskExitSem);
+00065   semDelete(tickerSem);
+00066   semDelete(tickerExitSem);
+00067 
+00068   Error( ErrorDebug, "AvoidObstacle destroyed");
+00069 
+.fi
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int AvoidObstacle::init (void)
+.PP
+Definition at line 229 of file AvoidObstacle.cc.
+.PP
+Referenced by hulkmaincpp().
+.PP
+.nf
+00230 {
+00231 
+.fi
+.SS int AvoidObstacle::run (void)
+.PP
+Definition at line 240 of file AvoidObstacle.cc.
+.PP
+Referenced by hulkmaincpp().
+.PP
+.nf
+00241 {
+00242   taskMode=TaskRunning;
+00243   semGive(tickerSem);
+00244   return 0;
+00245 
+.fi
+.SS int AvoidObstacle::step (void)
+.PP
+Definition at line 233 of file AvoidObstacle.cc.
+.PP
+.nf
+00234 {
+00235   taskMode=TaskStep;
+00236   semGive(taskSem);
+00237   return 0;
+00238 
+.fi
+.SS int AvoidObstacle::stop (void)
+.PP
+Definition at line 247 of file AvoidObstacle.cc.
+.PP
+Referenced by hulkmaincpp().
+.PP
+.nf
+00248 {
+00249   taskMode=TaskStopped;
+00250   return 0;
+00251 
+.fi
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for HulkRobot from the source code.

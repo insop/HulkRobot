@@ -1,0 +1,163 @@
+.TH error.cc 3 "29 May 2002" "HulkRobot" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+error.cc \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <stdio.h>\fR
+.br
+\fC#include <string.h>\fR
+.br
+\fC#include <vxWorks.h>\fR
+.br
+\fC#include <taskLib.h>\fR
+.br
+\fC#include "error.h"\fR
+.br
+\fC#include "list.h"\fR
+.br
+\fC#include "tyLib.h"\fR
+.br
+\fC#include "ioLib.h"\fR
+.br
+.SS Functions
+
+.in +1c
+.ti -1c
+.RI "void \fBinitError\fR (int _errorThreshold)"
+.br
+.ti -1c
+.RI "void \fBfatalExit\fR (void)"
+.br
+.ti -1c
+.RI "void \fBatFatalExit\fR (void(*exitFunc)(void))"
+.br
+.in -1c
+.SS Variables
+
+.in +1c
+.ti -1c
+.RI "const int \fBMaxTask\fR = 100"
+.br
+.ti -1c
+.RI "const int \fBMaxExitFunc\fR = 100"
+.br
+.ti -1c
+.RI "int \fBerrorThreshold\fR"
+.br
+.in -1c
+.SH FUNCTION DOCUMENTATION
+.PP 
+.SS void atFatalExit (void(* exitFunc)(void))
+.PP
+Definition at line 89 of file error.cc.
+.PP
+.nf
+00090 {
+00091   int i;
+00092   // register task
+00093   for(i=0;i<numTask;i++)
+00094     if (taskList[i]==taskIdSelf()) break;
+00095   if (i==numTask) {
+00096     if (numTask==MaxTask) {
+00097       Error( ErrorExit, "Maximum number of registered task exceeded" );
+00098     } else {
+00099       taskList[numTask++]=taskIdSelf();
+00100       Error1( ErrorDebug, "Registering task %s", taskName(taskIdSelf()));
+00101     }
+00102   }
+00103   if (!exitFunc) return;
+00104   for(i=0;i<numExitFunc;i++)
+00105     if (exitFuncList[i]==exitFunc) break;
+00106   if (i==numExitFunc) {
+00107     if (numExitFunc==MaxExitFunc) {
+00108   Error( ErrorExit, "Maximum number of exit function exceeded" );
+00109     } else {
+00110       exitFuncList[numExitFunc++]=exitFunc;
+00111     }
+00112   }
+00113 
+.fi
+.SS void fatalExit (void)
+.PP
+Definition at line 44 of file error.cc.
+.PP
+.nf
+00045 {
+00046   int i;
+00047   char taskNameStr[32];
+00048 
+00049   if (taskName(taskIdSelf()))
+00050     strncpy(taskNameStr, taskName(taskIdSelf()), 32);
+00051   else
+00052     strcpy(taskNameStr, "No Name");
+00053 
+00054   printf( "Fatal Exit Sequence Initiated in task %d(%s)\n", 
+00055           taskIdSelf(),
+00056           taskNameStr );
+00057   printf( "Number of currently registered task is %d\n", numTask );
+00058   //
+00059   // delete all tasks registered except this one
+00060   //
+00061 
+00062   for(i=0;i<numTask;i++) {
+00063     if (taskList[i]!=taskIdSelf() && taskIdVerify(taskList[i])==OK) {
+00064       if (taskName(taskList[i]))
+00065   strncpy(taskNameStr, taskName(taskList[i]), 32);
+00066       else
+00067   strcpy(taskNameStr, "No Name");
+00068 
+00069       if (taskDelete(taskList[i])==OK) {
+00070   printf( "Task %d(%s) deleted successfully\n",
+00071           taskList[i],
+00072           taskNameStr );
+00073       } else {
+00074   printf( "Task %d(%s) delete failed\n",
+00075           taskList[i],
+00076           taskNameStr );
+00077       }
+00078     }
+00079   }
+00080 
+.fi
+.SS void initError (int _errorThreshold)
+.PP
+Definition at line 22 of file error.cc.
+.PP
+.nf
+00023 {
+00024   printf( "Error initialized\n" );
+00025   errorThreshold=_errorThreshold;
+00026   numTask=0;
+00027   numExitFunc=0;
+00028   
+00029   //  for serial monitor
+00030 /*
+00031   serialDev=fopen("/tyCo/3", "r+");
+00032   if (serialDev==(FILE *)NULL) {
+00033     Error(ErrorFatal, "Unable to open for serial monitor port");
+00034     return;
+00035   }
+00036 
+00037   if(ioctl(fileno(serialDev), FIOBAUDRATE, 19200)==ERROR) {
+00038     Error(ErrorFatal, "Unable to set baud rate");
+00039     return;
+00040   }
+00041 
+.fi
+.SH VARIABLE DOCUMENTATION
+.PP 
+.SS const int MaxExitFunc = 100
+.PP
+Definition at line 12 of file error.cc.
+.SS const int MaxTask = 100
+.PP
+Definition at line 11 of file error.cc.
+.SS int errorThreshold
+.PP
+Definition at line 20 of file error.cc.
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for HulkRobot from the source code.

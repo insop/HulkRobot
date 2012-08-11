@@ -1,0 +1,130 @@
+.TH dfl.h 3 "29 May 2002" "HulkRobot" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+dfl.h \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <vxWorks.h>\fR
+.br
+\fC#include <semLib.h>\fR
+.br
+\fC#include <taskLib.h>\fR
+.br
+\fC#include <string.h>\fR
+.br
+\fC#include "list.h"\fR
+.br
+\fC#include "error.h"\fR
+.br
+.SS Typedefs
+
+.in +1c
+.ti -1c
+.RI "typedef unsigned char \fBbyte\fR"
+.br
+.ti -1c
+.RI "typedef signed char \fBsByte\fR"
+.br
+.in -1c
+.SS Enumerations
+
+.in +1c
+.ti -1c
+.RI "enum { \fBDataTypeSByte\fR, \fBDataTypeSByteArray\fR, \fBDataTypeSByte2DArray\fR, \fBDataTypeInt\fR, \fBDataTypeIntArray\fR, \fBDataTypeInt2DArray\fR, \fBDataTypeFloat\fR, \fBDataTypeFloatArray\fR, \fBDataTypeFloat2DArray\fR }"
+.br
+.in -1c
+.SS Variables
+
+.in +1c
+.ti -1c
+.RI "const int \fBMaxObjName\fR = 32"
+.br
+.ti -1c
+.RI "const int \fBMaxTaskName\fR = 32"
+.br
+.ti -1c
+.RI "const int \fBMaxDescription\fR = 256"
+.br
+.ti -1c
+.RI "const int \fBTickerTaskPriority\fR = 10"
+.br
+.ti -1c
+.RI "const int \fBTickerTaskStackSize\fR = 8192"
+.br
+.ti -1c
+.RI "const int \fBOSTickPeriod\fR = 1"
+.br
+.in -1c
+.SH TYPEDEF DOCUMENTATION
+.PP 
+.SS typedef unsigned char byte
+.PP
+Definition at line 30 of file dfl.h.
+.SS typedef signed char sByte
+.PP
+Definition at line 31 of file dfl.h.
+.SH ENUMERATION TYPE DOCUMENTATION
+.PP 
+.SS anonymous enum
+.PP
+\fBEnumeration values:\fR
+.in +1c
+.TP
+\fB\fIDataTypeSByte\fR \fR
+.TP
+\fB\fIDataTypeSByteArray\fR \fR
+.TP
+\fB\fIDataTypeSByte2DArray\fR \fR
+.TP
+\fB\fIDataTypeInt\fR \fR
+.TP
+\fB\fIDataTypeIntArray\fR \fR
+.TP
+\fB\fIDataTypeInt2DArray\fR \fR
+.TP
+\fB\fIDataTypeFloat\fR \fR
+.TP
+\fB\fIDataTypeFloatArray\fR \fR
+.TP
+\fB\fIDataTypeFloat2DArray\fR \fR
+.PP
+Definition at line 45 of file dfl.h.
+.PP
+.nf
+00045      {                    // Basic data types
+00046   DataTypeSByte,
+00047   DataTypeSByteArray,
+00048   DataTypeSByte2DArray,
+00049   DataTypeInt,
+00050   DataTypeIntArray,
+00051   DataTypeInt2DArray,
+00052   DataTypeFloat,
+00053   DataTypeFloatArray, 
+00054   DataTypeFloat2DArray
+00055 
+.fi
+.SH VARIABLE DOCUMENTATION
+.PP 
+.SS const int MaxDescription = 256
+.PP
+Definition at line 40 of file dfl.h.
+.SS const int MaxObjName = 32
+.PP
+Definition at line 38 of file dfl.h.
+.SS const int MaxTaskName = 32
+.PP
+Definition at line 39 of file dfl.h.
+.SS const int OSTickPeriod = 1
+.PP
+Definition at line 43 of file dfl.h.
+.SS const int TickerTaskPriority = 10
+.PP
+Definition at line 41 of file dfl.h.
+.SS const int TickerTaskStackSize = 8192
+.PP
+Definition at line 42 of file dfl.h.
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for HulkRobot from the source code.

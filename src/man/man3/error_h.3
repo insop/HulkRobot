@@ -1,0 +1,167 @@
+.TH error.h 3 "29 May 2002" "HulkRobot" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+error.h \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <stdio.h>\fR
+.br
+.SS Defines
+
+.in +1c
+.ti -1c
+.RI "#define \fBError\fR(errorLevel, errorMsg)"
+.br
+.ti -1c
+.RI "#define \fBError1\fR(errorLevel, errorMsg, arg1)"
+.br
+.ti -1c
+.RI "#define \fBError2\fR(errorLevel, errorMsg, arg1, arg2)"
+.br
+.ti -1c
+.RI "#define \fBError3\fR(errorLevel, errorMsg, arg1, arg2, arg3)"
+.br
+.ti -1c
+.RI "#define \fBError4\fR(errorLevel, errorMsg, arg1, arg2, arg3, arg4)"
+.br
+.ti -1c
+.RI "#define \fBError5\fR(errorLevel, errorMsg, arg1, arg2, arg3, arg4, arg5)"
+.br
+.ti -1c
+.RI "#define \fBAssert\fR(expr)"
+.br
+.in -1c
+.SS Enumerations
+
+.in +1c
+.ti -1c
+.RI "enum { \fBErrorNone\fR, \fBErrorDebug\fR, \fBErrorWarning\fR, \fBErrorFatal\fR, \fBErrorExit\fR }"
+.br
+.in -1c
+.SS Functions
+
+.in +1c
+.ti -1c
+.RI "void \fBinitError\fR (int \fBerrorThreshold\fR)"
+.br
+.ti -1c
+.RI "void \fBfatalExit\fR (void)"
+.br
+.ti -1c
+.RI "void \fBatFatalExit\fR (void(*exitFunc)(void))"
+.br
+.in -1c
+.SH DEFINE DOCUMENTATION
+.PP 
+.SS #define Assert(expr)
+.PP
+\fBValue:\fR
+.PP
+.nf
+
+.fi
+.PP
+Definition at line 75 of file error.h.
+.PP
+Referenced by AlignWall::AlignWall(), AvoidObstacle::AvoidObstacle(), FollowWall::FollowWall(), GoStraight::GoStraight(), MonitorCorner::MonitorCorner(), MonitorDoor::MonitorDoor(), MonitorFront::MonitorFront(), MonitorSide::MonitorSide(), and TurnCorner::TurnCorner().
+.SS #define Error(errorLevel, errorMsg)
+.PP
+\fBValue:\fR
+.PP
+.nf
+
+.fi
+.PP
+Definition at line 69 of file error.h.
+.PP
+Referenced by AlignWall::AlignWall(), AvoidObstacle::AvoidObstacle(), FollowWall::FollowWall(), GoStraight::GoStraight(), MonitorCorner::MonitorCorner(), MonitorDoor::MonitorDoor(), MonitorFront::MonitorFront(), MonitorSide::MonitorSide(), TurnCorner::TurnCorner(), atFatalExit(), wtest::fire(), turn::fire(), circle::fire(), gyro::gyro(), hulkmaincpp(), turn::turn(), wheel::wheel(), AlignWall::~AlignWall(), AvoidObstacle::~AvoidObstacle(), FollowWall::~FollowWall(), GoStraight::~GoStraight(), MonitorCorner::~MonitorCorner(), MonitorDoor::~MonitorDoor(), MonitorFront::~MonitorFront(), MonitorSide::~MonitorSide(), and TurnCorner::~TurnCorner().
+.SS #define Error1(errorLevel, errorMsg, arg1)
+.PP
+\fBValue:\fR
+.PP
+.nf
+
+.fi
+.PP
+Definition at line 70 of file error.h.
+.PP
+Referenced by atFatalExit().
+.SS #define Error2(errorLevel, errorMsg, arg1, arg2)
+.PP
+\fBValue:\fR
+.PP
+.nf
+
+.fi
+.PP
+Definition at line 71 of file error.h.
+.PP
+Referenced by wheel::setSteerHeading(), turnTest(), and wheel::wheel().
+.SS #define Error3(errorLevel, errorMsg, arg1, arg2, arg3)
+.PP
+\fBValue:\fR
+.PP
+.nf
+
+.fi
+.PP
+Definition at line 72 of file error.h.
+.SS #define Error4(errorLevel, errorMsg, arg1, arg2, arg3, arg4)
+.PP
+\fBValue:\fR
+.PP
+.nf
+
+.fi
+.PP
+Definition at line 73 of file error.h.
+.SS #define Error5(errorLevel, errorMsg, arg1, arg2, arg3, arg4, arg5)
+.PP
+\fBValue:\fR
+.PP
+.nf
+
+.fi
+.PP
+Definition at line 74 of file error.h.
+.SH ENUMERATION TYPE DOCUMENTATION
+.PP 
+.SS anonymous enum
+.PP
+\fBEnumeration values:\fR
+.in +1c
+.TP
+\fB\fIErrorNone\fR \fR
+.TP
+\fB\fIErrorDebug\fR \fR
+.TP
+\fB\fIErrorWarning\fR \fR
+.TP
+\fB\fIErrorFatal\fR \fR
+.TP
+\fB\fIErrorExit\fR \fR
+.PP
+Definition at line 5 of file error.h.
+.PP
+.nf
+00005      {
+00006   ErrorNone,
+00007   ErrorDebug,
+00008   ErrorWarning,
+00009   ErrorFatal,
+00010   ErrorExit
+00011 
+.fi
+.SH FUNCTION DOCUMENTATION
+.PP 
+.SS void atFatalExit (void(* exitFunc)(void))
+.PP
+.SS void fatalExit (void)
+.PP
+.SS void initError (int errorThreshold)
+.PP
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for HulkRobot from the source code.

@@ -1,0 +1,162 @@
+.TH MonitorDoor 3 "29 May 2002" "HulkRobot" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+MonitorDoor \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <MonitorDoor.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBMonitorDoor\fR (int priority, int samplingPeriod, int stackSize, \fBgyro\fR *aG, \fBusonic\fR *aU, \fBwheel\fR *aW)"
+.br
+.ti -1c
+.RI "\fB~MonitorDoor\fR ()"
+.br
+.ti -1c
+.RI "int \fBinit\fR (void)"
+.br
+.ti -1c
+.RI "int \fBstep\fR (void)"
+.br
+.ti -1c
+.RI "int \fBrun\fR (void)"
+.br
+.ti -1c
+.RI "int \fBstop\fR (void)"
+.br
+.ti -1c
+.RI "int \fBisDoor\fR (void)"
+.br
+.in -1c
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS MonitorDoor::MonitorDoor (int _priority, int _samplingPeriod, int stackSize, \fBgyro\fR * aG, \fBusonic\fR * aU, \fBwheel\fR * aW)
+.PP
+Definition at line 19 of file MonitorDoor.cc.
+.PP
+.nf
+00021 {
+00022 
+00023   Error( ErrorDebug, "MonitorDooDoor initializing");
+00024   priority        = _priority;
+00025   samplingPeriod= _samplingPeriod;
+00026   delayTicks      = samplingPeriod/OSTickPeriod;
+00027 
+00028   taskMode        = TaskStopped;
+00029   taskSem = semBCreate(SEM_Q_PRIORITY, SEM_EMPTY);
+00030   tickerSem       = semBCreate(SEM_Q_PRIORITY, SEM_EMPTY);
+00031   taskExitSem     = semBCreate(SEM_Q_PRIORITY, SEM_EMPTY);
+00032   tickerExitSem   = semBCreate(SEM_Q_PRIORITY, SEM_EMPTY);
+00033 
+00034   aGyro = aG;
+00035   aUSonic = aU;
+00036   aWheel = aW;
+00037 
+00038   Assert( taskSem && taskExitSem && tickerSem && tickerExitSem );
+00039 
+00040   taskId  = taskSpawn("MonitorDoor", priority, VX_FP_TASK, 
+00041                           stackSize, (FUNCPTR) taskModuleStub,
+00042                           (int) this, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+00043   Assert(taskId!=ERROR);
+00044 
+00045   semTake(taskExitSem, WAIT_FOREVER);
+00046   
+00047   tickerTaskId    = taskSpawn("MonitorDoor", TickerTaskPriority, 0, 
+00048                           TickerTaskStackSize,
+00049                           (FUNCPTR) taskModuleTickerStub,
+00050                           (int) this,
+00051                           0, 0, 0, 0,
+00052                           0, 0, 0, 0, 0);
+00053   Assert(tickerTaskId!=ERROR);
+00054   semTake(tickerExitSem, WAIT_FOREVER);
+00055 
+00056   door = 0; // set initial monitor signal ,false
+00057 
+.fi
+.SS MonitorDoor::~MonitorDoor ()
+.PP
+Definition at line 59 of file MonitorDoor.cc.
+.PP
+.nf
+00060 {
+00061   taskMode=TaskTerminate;
+00062   semGive(tickerSem);
+00063   semGive(taskSem);
+00064   semTake(tickerExitSem, WAIT_FOREVER);
+00065   semTake(taskExitSem, WAIT_FOREVER);
+00066   semDelete(taskSem);
+00067   semDelete(taskExitSem);
+00068   semDelete(tickerSem);
+00069   semDelete(tickerExitSem);
+00070 
+00071   Error( ErrorDebug, "MonitorDoor destroyed");
+00072 
+.fi
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int MonitorDoor::init (void)
+.PP
+Definition at line 171 of file MonitorDoor.cc.
+.PP
+Referenced by hulkmaincpp().
+.PP
+.nf
+00172 {
+00173   door = 0;       // set initially door = false
+00174 
+.fi
+.SS int MonitorDoor::isDoor (void)
+.PP
+Definition at line 165 of file MonitorDoor.cc.
+.PP
+Referenced by hulkmaincpp().
+.PP
+.nf
+00166 {
+00167   return door;
+00168 
+.fi
+.SS int MonitorDoor::run (void)
+.PP
+Definition at line 183 of file MonitorDoor.cc.
+.PP
+Referenced by hulkmaincpp().
+.PP
+.nf
+00184 {
+00185   taskMode=TaskRunning;
+00186   semGive(tickerSem);
+00187   return 0;
+00188 
+.fi
+.SS int MonitorDoor::step (void)
+.PP
+Definition at line 176 of file MonitorDoor.cc.
+.PP
+.nf
+00177 {
+00178   taskMode=TaskStep;
+00179   semGive(taskSem);
+00180   return 0;
+00181 
+.fi
+.SS int MonitorDoor::stop (void)
+.PP
+Definition at line 190 of file MonitorDoor.cc.
+.PP
+.nf
+00191 {
+00192   taskMode=TaskStopped;
+00193   return 0;
+00194 
+.fi
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for HulkRobot from the source code.
